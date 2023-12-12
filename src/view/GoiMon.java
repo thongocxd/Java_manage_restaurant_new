@@ -16,6 +16,7 @@ import java.awt.GridLayout;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 import java.awt.FlowLayout;
+import javax.swing.JTextField;
 
 
 /**
@@ -434,11 +435,23 @@ public void createTables() {
 
                     // Set other properties, e.g., opaque to make the background color visible
                     status1.setOpaque(true);
-                    tablePanel.add(tablePanelItem);
-                    tablePanelItem.add(status1, BorderLayout.SOUTH);
-                    tablePanelItem.add(imageLabel, BorderLayout.CENTER);
-                    tablePanelItem.add(increaseButton,BorderLayout.EAST);
-                    tablePanelItem.add(decreaseButton,BorderLayout.WEST);
+tablePanel.add(tablePanelItem);
+JTextField quantityField = new JTextField(5); // 5 là chiều rộng của trường văn bản
+
+// Tạo một panel phụ để chứa hai nút
+JPanel buttonPanel1 = new JPanel();
+buttonPanel1.setLayout(new FlowLayout()); // Sử dụng FlowLayout để nút nằm cạnh nhau
+buttonPanel1.add(decreaseButton);
+buttonPanel1.add(quantityField); // Thêm trường số lượng giữa hai nút
+buttonPanel1.add(increaseButton);
+
+// Thêm các thành phần vào tablePanelItem
+tablePanelItem.setLayout(new BorderLayout());
+tablePanelItem.add(status1, BorderLayout.NORTH); // Đặt status1 ở phía trên cùng
+tablePanelItem.add(imageLabel, BorderLayout.CENTER); // Ảnh ở trung tâm
+tablePanelItem.add(buttonPanel1, BorderLayout.SOUTH); // Đặt panel chứa hai nút ở phía dưới cùng
+
+
                   
                 }
 
