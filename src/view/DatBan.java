@@ -22,6 +22,7 @@ import java.awt.FlowLayout;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import org.bson.types.ObjectId;
 import view.GoiMon;
 
 
@@ -206,29 +207,33 @@ private Login loginForm;
         createTables();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void createNewBill(int tableNumber) {
+private void createNewBill(int tableNumber) {
     try {
         MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
         MongoDatabase database = mongoClient.getDatabase("restaurant");
         MongoCollection<Document> billCollection = database.getCollection("bill");
 
-       Document newBill = new Document("table_number", tableNumber)
+        // Generate a new ObjectId for idBill
+        ObjectId idBill = new ObjectId();
+
+        Document newBill = new Document("table_number", tableNumber)
+                .append("idBill", idBill) // Add idBill field
                 .append("bill", new Document("bill_date", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                                  .append("total_price", null))
+                        .append("total_price", null))
                 .append("order", Arrays.asList()) // Danh sách món ăn trống
                 .append("payment_status", "unpaid");
         billCollection.insertOne(newBill);
-        
+
         // Lưu trữ ID của hóa đơn mới tạo để sử dụng sau này
         String billId = newBill.getObjectId("_id").toString();
-        
-    
+
         System.out.println("New bill created for table number: " + tableNumber);
     } catch (Exception e) {
         e.printStackTrace();
         JOptionPane.showMessageDialog(null, "Error creating new bill. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
+
     
 public void createTables() {
     SwingUtilities.invokeLater(new Runnable() {

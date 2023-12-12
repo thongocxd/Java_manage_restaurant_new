@@ -234,7 +234,22 @@ private void displayTableName() {
             JOptionPane.showMessageDialog(null, "Error retrieving table name. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+    private Document getBillByTableNumber(int tableNumber) {
+    Document billDocument = null;
+    try {
+        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+        MongoDatabase database = mongoClient.getDatabase("restaurant");
+        MongoCollection<Document> billCollection = database.getCollection("bill");
+
+        // Query the bill based on table number
+        billDocument = billCollection.find(new Document("_id", tableNumber)).first();
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error retrieving bill information. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    return billDocument;
+}
+
 public void createTables() {
     SwingUtilities.invokeLater(new Runnable() {
         public void run() {
