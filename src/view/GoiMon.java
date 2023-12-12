@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package view;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
@@ -19,10 +16,6 @@ import java.awt.GridLayout;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 import java.awt.FlowLayout;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import view.GoiMon;
 
 
 /**
@@ -33,20 +26,22 @@ import view.GoiMon;
  * @param <cmdAdj>
  * @param <cmdAdj>
  */
-public class DatBan extends javax.swing.JFrame {
+public class GoiMon extends javax.swing.JFrame {
+     private int table_Number;
 
     
     // Add this line to declare the tablePanel variable
 private javax.swing.JPanel tablePanel;
-private Login loginForm;
+
     /**
      * Creates new form DatBan
      */
-    public DatBan() {
-        initComponents();
-        createTables();
-        loginForm = new Login();
-    }
+   public GoiMon(int table_Number) {
+    this.table_Number = table_Number;
+    initComponents();  // Initialize components first
+    displayTableName(); // Now it's safe to use the components
+    createTables();
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -63,7 +58,7 @@ private Login loginForm;
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        lbTitle = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
         canvas1 = new java.awt.Canvas();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -72,7 +67,7 @@ private Login loginForm;
 
         jPanel2.setBackground(new java.awt.Color(204, 204, 204));
 
-        jButton1.setText("Menu");
+        jButton1.setText("Mã bàn");
         jButton1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -80,7 +75,7 @@ private Login loginForm;
             }
         });
 
-        jButton2.setText("Đặt Bàn");
+        jButton2.setText("Món đã gọi");
         jButton2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -88,7 +83,7 @@ private Login loginForm;
             }
         });
 
-        jButton3.setText("Đăng Xuất");
+        jButton3.setText("Quay lại");
         jButton3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 3, true));
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -96,7 +91,7 @@ private Login loginForm;
             }
         });
 
-        jButton4.setText("Tài Khoản");
+        jButton4.setText("Thanh Toán");
         jButton4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -104,24 +99,34 @@ private Login loginForm;
             }
         });
 
-        lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
-        lbTitle.setForeground(new java.awt.Color(108, 91, 123));
-        lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbTitle.setText("Title");
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(lbTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(26, 26, 26)
+                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -129,12 +134,12 @@ private Login loginForm;
                 .addGap(18, 18, 18)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38)
-                .addComponent(lbTitle)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 145, Short.MAX_VALUE)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -156,9 +161,9 @@ private Login loginForm;
                 .addComponent(canvas1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(262, 262, 262))
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(48, Short.MAX_VALUE)
+                .addContainerGap(38, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(199, Short.MAX_VALUE))
+                .addContainerGap(189, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -191,44 +196,44 @@ private Login loginForm;
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-         loginForm.setVisible(true);
-    this.dispose();  // Close the current form
+         this.dispose();  // Close the current form
+
+    // Create an instance of DatBan and show it
+    DatBan datBanForm = new DatBan();
+    datBanForm.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:    createTables();
-       createTables();
-    
+      
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        createTables();
+        
+   
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void createNewBill(int tableNumber) {
-    try {
-        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
-        MongoDatabase database = mongoClient.getDatabase("restaurant");
-        MongoCollection<Document> billCollection = database.getCollection("bill");
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
+private void displayTableName() {
+        try {
+            MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+            MongoDatabase database = mongoClient.getDatabase("restaurant");
+            MongoCollection<Document> tableCollection = database.getCollection("table");
 
-       Document newBill = new Document("table_number", tableNumber)
-                .append("bill", new Document("bill_date", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                                  .append("total_price", null))
-                .append("order", Arrays.asList()) // Danh sách món ăn trống
-                .append("payment_status", "unpaid");
-        billCollection.insertOne(newBill);
-        
-        // Lưu trữ ID của hóa đơn mới tạo để sử dụng sau này
-        String billId = newBill.getObjectId("_id").toString();
-        
-    
-        System.out.println("New bill created for table number: " + tableNumber);
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Error creating new bill. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+            Document tableDocument = tableCollection.find(new Document("table_number", table_Number)).first();
+            if (tableDocument != null) {
+                String tableName = tableDocument.getString("table_Name");
+                jButton1.setText(tableName); // Hiển thị tên bàn trên nút
+                jTextField1.setText("Bàn số " + table_Number ); // Hiển thị số và tên bàn trong jTextField1
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error retrieving table name. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
-}
     
 public void createTables() {
     SwingUtilities.invokeLater(new Runnable() {
@@ -236,21 +241,29 @@ public void createTables() {
             try {
                 MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
                 MongoDatabase database = mongoClient.getDatabase("restaurant");
-                MongoCollection<Document> collection = database.getCollection("table");
+                MongoCollection<Document> collection = database.getCollection("food");
+              
 
-                tablePanel = new JPanel(new GridLayout(3, 4)); // Adjust grid layout as needed
+                tablePanel = new JPanel(new GridLayout(5, 0)); // Adjust grid layout as needed
                 tablePanel.setBounds(150, 50, 900, 500);
 
                 for (Document document : collection.find()) {
-                    Integer tableNumber = document.getInteger("table_number");
-                    String tableName = document.getString("table_name");
-                    String trangThai = document.getString("trangthai");
+                    String foodName = document.getString("foodName");
+                    String price = document.getString("price");
+                    String status = document.getString("status");
+                    
 
                     // Debugging print
-                    System.out.println("Table Number: " + tableNumber + ", Table Name: " + tableName);
+                    System.out.println("Food name: " + foodName + ", Price: " + price);
+                     // Display the first foodName in the jTextField1
+                 
 
-                    JLabel status = new JLabel(tableName + " - Tình trạng: " + trangThai);
+                    JLabel status1 = new JLabel(foodName + " - status: " + status);
                     JPanel tablePanelItem = new JPanel(new BorderLayout());
+                      // Add Increase and Decrease buttons
+                    JButton increaseButton = new JButton("+");
+                    JButton decreaseButton = new JButton("-");
+                    
 
                     // Ensure the imagePath is correctly retrieved and valid
                     String imagePath = document.getString("imagePath");
@@ -264,18 +277,31 @@ public void createTables() {
 
                     JButton actionButton = new JButton();
                     buttonPanel.add(actionButton);
-                    tablePanelItem.add(buttonPanel, BorderLayout.SOUTH);
+                    
+                     increaseButton.addActionListener(e -> {
+                    // Implement logic to increase the quantity of the product
+                    System.out.println("Increase quantity for " + foodName);
+                });
+
+                decreaseButton.addActionListener(e -> {
+                    // Implement logic to decrease the quantity of the product
+                    System.out.println("Decrease quantity for " + foodName);
+                });
+
+                // Add buttons to the button panel
+                buttonPanel.add(increaseButton);
+                buttonPanel.add(decreaseButton);
 
                     // Create buttons based on the table status
-                    if ("Ban Trong".equals(trangThai)) {
+                    if ("Mon An".equals(status)) {
                         actionButton.setText("Đặt Bàn");
                         actionButton.addActionListener(e -> {
                             // Display a confirmation dialog
-                            int result = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + tableNumber + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
+                            int result = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + foodName + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
 
                             if (result == JOptionPane.YES_OPTION) {
                                 // Update the table status in the database (assuming you have a method to update the database)
-                                updateTableStatus(tableNumber, "Ban Da Dat");
+                                updateTableStatus(foodName, "Ban Da Dat");
 
                                 // Change the button text to "Gọi Món"
                                 actionButton.setText("Gọi Món");
@@ -283,8 +309,7 @@ public void createTables() {
                                 // Add "Hủy Bàn" button
                                 JButton cancelButton = new JButton("Hủy Bàn");
                                 cancelButton.addActionListener(cancelEvent -> {
-                                     int result1 = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + tableNumber + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
-                                     updateTableStatus(tableNumber, "Ban Trong");
+                                     updateTableStatus(foodName, "");
                                     actionButton.setText("Đặt Bàn");
                                      // Remove "Gọi Món" and "Hủy Bàn" buttons
                                     buttonPanel.removeAll();
@@ -297,12 +322,8 @@ public void createTables() {
                                 // Add "Gọi Món" button
                                 JButton orderButton = new JButton("Gọi Món");
                                 orderButton.addActionListener(orderEvent -> {
-                                      createNewBill(tableNumber);
                                     // Add code to handle the action when the "Gọi Món" button is clicked
-                                    System.out.println("Gọi Món clicked for table number: " + tableNumber);
-                                    GoiMon goiMonFrame = new GoiMon(tableNumber);
-                                    goiMonFrame.setVisible(true);
-                                    dispose();  // Close the current form
+                                    System.out.println("Gọi Món clicked for table number: " + foodName);
                                 });
 
                                 // Add buttons to the buttonPanel   
@@ -315,23 +336,18 @@ public void createTables() {
                                 tablePanelItem.repaint();
                             }
                         });
-                    } else if ("Ban Da Dat".equals(trangThai)) {
+                    } else if ("Ban Da Dat".equals(status)) {
     actionButton.setText("Gọi Món");
     actionButton.addActionListener(orderEvent -> {
-        
-        createNewBill(tableNumber);
         // Add code to handle the action when the "Gọi Món" button is clicked
-        System.out.println("Gọi Món clicked for table number: " + tableNumber);
-        GoiMon goiMonFrame = new GoiMon(tableNumber);
-        goiMonFrame.setVisible(true);
-        dispose();  // Close the current form
+        System.out.println("Gọi Món clicked for table number: " + foodName);
     });
 
     // Add "Hủy Bàn" button
     JButton cancelButton = new JButton("Hủy Bàn");
     cancelButton.addActionListener(cancelEvent -> {
         // Add code to handle the action when the "Hủy Bàn" button is clicked
-        updateTableStatus(tableNumber, "Ban Trong");
+        updateTableStatus(foodName, "Ban Trong");
         actionButton.setText("Đặt Bàn");
 
         // Remove "Gọi Món" and "Hủy Bàn" buttons
@@ -340,11 +356,11 @@ public void createTables() {
         // Add "Đặt Bàn" button
         actionButton.addActionListener(e -> {
             // Display a confirmation dialog
-            int result = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + tableNumber + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
+            int result = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + foodName + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
 
             if (result == JOptionPane.YES_OPTION) {
                 // Update the table status in the database (assuming you have a method to update the database)
-                updateTableStatus(tableNumber, "Ban Da Dat");
+                updateTableStatus(foodName, "Ban Da Dat");
 
                 // Change the button text to "Gọi Món"
                 actionButton.setText("Gọi Món");
@@ -352,7 +368,7 @@ public void createTables() {
                 // Add "Hủy Bàn" button
                 JButton newCancelButton = new JButton("Hủy Bàn");
                 newCancelButton.addActionListener(newCancelEvent -> {
-                    updateTableStatus(tableNumber, "Ban Trong");
+                    updateTableStatus(foodName, "Ban Trong");
                     actionButton.setText("Đặt Bàn");
                     // Remove "Gọi Món" and "Hủy Bàn" buttons
                     buttonPanel.removeAll();
@@ -366,12 +382,8 @@ public void createTables() {
                 // Add "Gọi Món" button
                 JButton newOrderButton = new JButton("Gọi Món");
                 newOrderButton.addActionListener(newOrderEvent -> {
-                     createNewBill(tableNumber);
                     // Add code to handle the action when the "Gọi Món" button is clicked
-                    System.out.println("Gọi Món clicked for table number: " + tableNumber);
-                    GoiMon goiMonFrame = new GoiMon(tableNumber);
-                    goiMonFrame.setVisible(true);
-                    dispose();  // Close the current form
+                    System.out.println("Gọi Món clicked for table number: " + foodName);
                 });
 
                 // Add buttons to the buttonPanel   
@@ -403,15 +415,16 @@ public void createTables() {
 }
 
                     // Set the foreground color to make the text visible on the background
-                    status.setForeground(Color.WHITE);
+                    status1.setForeground(Color.WHITE);
 
                     // Set other properties, e.g., opaque to make the background color visible
-                    status.setOpaque(true);
-
-                    tablePanelItem.add(status, BorderLayout.NORTH);
-                    tablePanelItem.add(imageLabel, BorderLayout.CENTER);
-
+                    status1.setOpaque(true);
                     tablePanel.add(tablePanelItem);
+                    tablePanelItem.add(status1, BorderLayout.SOUTH);
+                    tablePanelItem.add(imageLabel, BorderLayout.CENTER);
+                    tablePanelItem.add(increaseButton,BorderLayout.EAST);
+                    tablePanelItem.add(decreaseButton,BorderLayout.WEST);
+                  
                 }
 
                 jPanel1.add(tablePanel);
@@ -421,20 +434,24 @@ public void createTables() {
                 e.printStackTrace();
             }
         }
+
+        private void updateTableStatus(String foodName, String ban_Da_Dat) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
     });
 }
 
 
     
-    private void updateTableStatus(int tableNumber, String newStatus) {
+    private void updateTableStatus(int foodName, String newStatus) {
         try {
             // Connect to MongoDB
             MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
             MongoDatabase database = mongoClient.getDatabase("restaurant");
-            MongoCollection<Document> collection = database.getCollection("table");
+            MongoCollection<Document> collection = database.getCollection("food");
 
             // Prepare the filter based on the table number
-            Document filter = new Document("table_number", tableNumber);
+            Document filter = new Document("foodName", foodName);
 
             // Prepare the update with the new status
             Document update = new Document("$set", new Document("trangthai", newStatus));
@@ -478,20 +495,23 @@ public void createTables() {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DatBan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GoiMon.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DatBan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GoiMon.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DatBan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GoiMon.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DatBan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(GoiMon.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                new DatBan().setVisible(true);
+              new GoiMon(1).setVisible(true); 
+                
             }
         });
     }
@@ -505,6 +525,6 @@ public void createTables() {
     private javax.swing.JButton jButton4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JLabel lbTitle;
+    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }
