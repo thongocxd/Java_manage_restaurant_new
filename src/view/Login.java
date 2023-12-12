@@ -145,35 +145,42 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        String username = jTextField1.getText();
+      // Existing code to get username and password
+    String username = jTextField1.getText();
     char[] passwordChars = jPasswordField1.getPassword();
     String password = new String(passwordChars);
 
-    // Kết nối đến MongoDB Atlas
-    MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+    // Connect to MongoDB
+    MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
 
-    // Chọn cơ sở dữ liệu
+    // Select the database
     MongoDatabase database = mongoClient.getDatabase("restaurant");
 
-    // Truy vấn cơ sở dữ liệu để kiểm tra đăng nhập
+    // Query the database to check login credentials
     MongoCollection<Document> collection = database.getCollection("users");
     Document query = new Document("username", username).append("password", password);
     MongoCursor<Document> cursor = collection.find(query).iterator();
 
     if (cursor.hasNext()) {
-        // Đăng nhập thành công
-        Interface interfaceForm = new Interface();
-        interfaceForm.setVisible(true);
-        this.dispose(); // Đóng cửa sổ hiện tại (Login)
+        Document userDoc = cursor.next();
+        int role = userDoc.getInteger("role");
+
+        // Check user role and open the corresponding interface
+        if (role == 2) {
+            Admin adminForm = new Admin();
+            adminForm.setVisible(true);
+        } else if (role == 1) {
+            Interface interfaceForm = new Interface();
+            interfaceForm.setVisible(true);
+        }
+        this.dispose(); // Close the current window (Login)
     } else {
-        // Đăng nhập thất bại
+        // Login failed
         jLabel5.setText("Tên đăng nhập hoặc mật khẩu không đúng");
-        // Xoá trường mật khẩu
-        jPasswordField1.setText("");
+        jPasswordField1.setText(""); // Clear the password field
     }
 
-    // Đóng kết nối MongoDB
+    // Close MongoDB connection
     mongoClient.close();
     }//GEN-LAST:event_jButton1ActionPerformed
 
