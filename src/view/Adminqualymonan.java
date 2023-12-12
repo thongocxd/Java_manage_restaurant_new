@@ -3,7 +3,25 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package view;
-
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.UpdateOptions;
+import javax.swing.SwingUtilities;
+import javax.swing.ImageIcon;
+import org.bson.Document;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.Color;
+import javax.swing.JOptionPane;
+import java.awt.FlowLayout;
+import javax.swing.table.DefaultTableModel;
+import org.bson.types.ObjectId;
 /**
  *
  * @author kevin
@@ -15,6 +33,7 @@ public class Adminqualymonan extends javax.swing.JFrame {
      */
     public Adminqualymonan() {
         initComponents();
+        populateTableWithFoodData();
     }
 
     /**
@@ -40,7 +59,6 @@ public class Adminqualymonan extends javax.swing.JFrame {
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -149,35 +167,46 @@ public class Adminqualymonan extends javax.swing.JFrame {
         );
 
         jButton6.setText("Thêm món");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
 
         jButton7.setText("Sửa món");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         jButton8.setText("Xóa món");
-
-        jButton9.setText("Load");
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
-                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
-                .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton9, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -230,6 +259,7 @@ public class Adminqualymonan extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -247,6 +277,114 @@ public class Adminqualymonan extends javax.swing.JFrame {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        AddFood addFoodForm = new AddFood(this); // 'this' refers to the current Adminquanlymonan instance
+        addFoodForm.setVisible(true);
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+    System.out.println("Button clicked"); // Simple debugging line
+
+        int selectedRow = jTable1.getSelectedRow();
+    if (selectedRow >= 0) {
+        String id = jTable1.getValueAt(selectedRow, 0).toString();
+        String tenMon = jTable1.getValueAt(selectedRow, 1).toString();
+        String dongGia = jTable1.getValueAt(selectedRow, 2).toString();
+        String trangThai = jTable1.getValueAt(selectedRow, 3).toString();
+
+        System.out.println("Retrieved from table: " + tenMon + ", " + dongGia + ", " + trangThai); // Debugging line
+
+        updateFoodInDatabase(id, tenMon, dongGia, trangThai);
+    } else {
+        // Handle case where no row is selected
+    }
+    
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = jTable1.getSelectedRow();
+    if (selectedRow >= 0) {
+        String id = jTable1.getValueAt(selectedRow, 0).toString();
+        
+        // Delete from the database
+        deleteFoodFromDatabase(id);
+
+        // Remove from the table model to update UI
+        ((DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
+    } else {
+        JOptionPane.showMessageDialog(this, "Please select a row to delete.");
+    }
+    }//GEN-LAST:event_jButton8ActionPerformed
+
+    
+    private void populateTableWithFoodData() {
+     MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
+    MongoDatabase database = mongoClient.getDatabase("restaurant");
+    MongoCollection<Document> collection = database.getCollection("food");
+
+    try (MongoCursor<Document> cursor = collection.find().iterator()) {
+        String[] columnNames = {"ID_MonAn", "TenMon", "Donggia", "TrangThai"};
+
+        // Set up the table model with editable cells
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return true; // Allow editing of all cells
+            }
+        };
+
+        while (cursor.hasNext()) {
+            Document doc = cursor.next();
+            String id = doc.getObjectId("_id").toString();
+            String tenMon = doc.getString("foodName");
+            String dongGia = doc.getString("price");
+            String trangThai = doc.getString("status");
+            model.addRow(new Object[]{id, tenMon, dongGia, trangThai});
+        }
+
+        jTable1.setModel(model);
+    } finally {
+        mongoClient.close();
+    }
+}
+    
+    private void updateFoodInDatabase(String id, String tenMon, String dongGia, String trangThai) {
+        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
+        MongoDatabase database = mongoClient.getDatabase("restaurant");
+        MongoCollection<Document> collection = database.getCollection("food");
+
+        Document filter = new Document("_id", new ObjectId(id));
+        Document updatedDocument = new Document("$set", new Document("foodName", tenMon)
+            .append("price", dongGia)
+            .append("status", trangThai));
+
+        collection.updateOne(filter, updatedDocument);
+        mongoClient.close();
+            System.out.println("Updating: " + id + ", " + tenMon + ", " + dongGia + ", " + trangThai); // Debugging line
+
+    }
+    
+    private void deleteFoodFromDatabase(String id) {
+    try (MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test")) {
+        MongoDatabase database = mongoClient.getDatabase("restaurant");
+        MongoCollection<Document> collection = database.getCollection("food");
+        
+        Document filter = new Document("_id", new ObjectId(id));
+        collection.deleteOne(filter);
+    } catch (Exception e) {
+        e.printStackTrace(); // For debugging purposes
+    }
+}
+    
+    public void refreshFoodTable() {
+    populateTableWithFoodData();
+}
+
+
+    
+    
 
     /**
      * @param args the command line arguments
@@ -293,7 +431,6 @@ public class Adminqualymonan extends javax.swing.JFrame {
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel5;
