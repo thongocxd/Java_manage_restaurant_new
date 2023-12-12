@@ -6,6 +6,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -44,69 +45,69 @@ public class ThanhToan extends JFrame {
     
     // Hàm xác nhận thanh toán
 private void confirmPayment() {
-    MongoClient mongoClient = null;
-    try {
-        mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
-        MongoDatabase database = mongoClient.getDatabase("restaurant");
-        MongoCollection<Document> billCollection = database.getCollection("bill");
-
-        // Retrieve the current bill document
-        Document currentBillDocument = billCollection.find(new Document("_id", new ObjectId("6577d6c2c7df30a99362a18a"))).first();
-
-        if (currentBillDocument != null) {
-            // Update payment_status to "paid"
-            currentBillDocument.put("payment_status", "paid");
-
-            // Get the total price
-            int totalPrice = calculateTotalPrice(database, currentBillDocument);
-
-            // Update total_price
-            currentBillDocument.put("total_price", totalPrice);
-
-            // Update the document in MongoDB
-            billCollection.replaceOne(new Document("_id", currentBillDocument.getObjectId("_id")), currentBillDocument);
-
-            // Display the updated bill information
-            displayBill(getBillInfoFromMongoDB());
-        } else {
-            // Handle the case where the current bill document is not found
-            System.err.println("No current bill document found.");
-        }
-    } catch (Exception e) {
-        e.printStackTrace(); // Handle the exception appropriately (log it, show a message, etc.)
-    } finally {
-        if (mongoClient != null) {
-            mongoClient.close();
-        }
-    }
+//    MongoClient mongoClient = null;
+//    try {
+//        mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+//        MongoDatabase database = mongoClient.getDatabase("restaurant");
+//        MongoCollection<Document> billCollection = database.getCollection("bill");
+//
+//        // Retrieve the current bill document
+//        Document currentBillDocument = billCollection.find(new Document("_id", new ObjectId("6577d6c2c7df30a99362a18a"))).first();
+//
+//        if (currentBillDocument != null) {
+//            // Update payment_status to "paid"
+//            currentBillDocument.put("payment_status", "paid");
+//
+//            // Get the total price
+//            int totalPrice = calculateTotalPrice(database, currentBillDocument);
+//
+//            // Update total_price
+//            currentBillDocument.put("total_price", totalPrice);
+//
+//            // Update the document in MongoDB
+//            billCollection.replaceOne(new Document("_id", currentBillDocument.getObjectId("_id")), currentBillDocument);
+//
+//            // Display the updated bill information
+//            displayBill(getBillInfoFromMongoDB());
+//        } else {
+//            // Handle the case where the current bill document is not found
+//            System.err.println("No current bill document found.");
+//        }
+//    } catch (Exception e) {
+//        e.printStackTrace(); // Handle the exception appropriately (log it, show a message, etc.)
+//    } finally {
+//        if (mongoClient != null) {
+//            mongoClient.close();
+//        }
+//    }
 }
 
     // You need to implement this method to calculate the total price based on the ordered items
-    private int calculateTotalPrice(MongoDatabase database, Document billDocument) {
-        int totalPrice = 0;
-
-        List<Document> orderList = (List<Document>) billDocument.get("order");
-        if (orderList != null && !orderList.isEmpty()) {
-            for (Document order : orderList) {
-                Integer foodId = order.getInteger("foodId");
-                Integer quantity = order.getInteger("quantity");
-
-                if (foodId != null && quantity != null) {
-                    Integer foodPrice = getFoodPriceFromMongoDB(database, foodId);
-                    totalPrice += foodPrice * quantity;
-                } else {
-                    // Handle the case where foodId or quantity is null
-                    System.err.println("Invalid data in the order.");
-                    return 0; // Or handle it in an appropriate way
-                }
-            }
-        }
-
-        return totalPrice;
-    }
-
-    
-
+//    private int calculateTotalPrice(MongoDatabase database, Document billDocument) {
+//        int totalPrice = 0;
+//
+//        List<Document> orderList = (List<Document>) billDocument.get("order");
+//        if (orderList != null && !orderList.isEmpty()) {
+//            for (Document order : orderList) {
+//                Integer foodId = order.getInteger("foodId");
+//                Integer quantity = order.getInteger("quantity");
+//
+//                if (foodId != null && quantity != null) {
+//                    Integer foodPrice = getFoodPriceFromMongoDB(database, foodId);
+//                    totalPrice += foodPrice * quantity;
+//                } else {
+//                    // Handle the case where foodId or quantity is null
+//                    System.err.println("Invalid data in the order.");
+//                    return 0; // Or handle it in an appropriate way
+//                }
+//            }
+//        }
+//
+//        return totalPrice;
+//    }
+//
+//    
+//
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             ThanhToan billPage = new ThanhToan();
@@ -131,7 +132,7 @@ private void confirmPayment() {
         MongoCollection<Document> billCollection = database.getCollection("bill");
 
         // Thực hiện truy vấn để lấy dữ liệu hóa đơn (ví dụ)
-        Document billDocument = billCollection.find(new Document("_id", new ObjectId("6577d6c2c7df30a99362a18a"))).first();
+        Document billDocument = billCollection.find(new Document("_id", new ObjectId("65783d4b3908780de642d77c"))).first();
 
         // Lấy thông tin từ Document và hiển thị nó
         if (billDocument != null) {
