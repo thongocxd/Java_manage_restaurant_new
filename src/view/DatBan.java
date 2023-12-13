@@ -35,7 +35,7 @@ import view.GoiMon;
  * @param <cmdAdj>
  */
 public class DatBan extends javax.swing.JFrame {
-
+private ObjectId idBill; // Khai báo idBill ở đây
     
     // Add this line to declare the tablePanel variable
 private javax.swing.JPanel tablePanel;
@@ -214,7 +214,7 @@ private void createNewBill(int tableNumber) {
         MongoCollection<Document> billCollection = database.getCollection("bill");
 
         // Generate a new ObjectId for idBill
-        ObjectId idBill = new ObjectId();
+        idBill = new ObjectId(); // Sử dụng biến instance idBill đã khai báo trước đó
 
         Document newBill = new Document("table_number", tableNumber)
                 .append("idBill", idBill) // Add idBill field
@@ -225,7 +225,8 @@ private void createNewBill(int tableNumber) {
         billCollection.insertOne(newBill);
 
         // Lưu trữ ID của hóa đơn mới tạo để sử dụng sau này
-        String billId = newBill.getObjectId("_id").toString();
+        String billId = newBill.getObjectId("idBill").toString();
+        System.out.println("Searching for idBill: " + idBill); // In ra giá trị của idBill
 
         System.out.println("New bill created for table number: " + tableNumber);
     } catch (Exception e) {
@@ -233,6 +234,7 @@ private void createNewBill(int tableNumber) {
         JOptionPane.showMessageDialog(null, "Error creating new bill. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
+
 
     
 public void createTables() {

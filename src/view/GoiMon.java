@@ -17,6 +17,7 @@ import java.awt.Color;
 import javax.swing.JOptionPane;
 import java.awt.FlowLayout;
 import javax.swing.JTextField;
+import org.bson.types.ObjectId; // Import ObjectId class
 
 
 /**
@@ -29,6 +30,7 @@ import javax.swing.JTextField;
  */
 public class GoiMon extends javax.swing.JFrame {
      private int table_Number;
+    private ObjectId idBill; // Declare idBill as ObjectId
 
     
     // Add this line to declare the tablePanel variable
@@ -37,12 +39,15 @@ private javax.swing.JPanel tablePanel;
     /**
      * Creates new form DatBan
      */
-   public GoiMon(int table_Number) {
-    this.table_Number = table_Number;
-    initComponents();  // Initialize components first
-    displayTableName(); // Now it's safe to use the components
-    createTables();
-}
+    public GoiMon(int table_Number) {
+        this.table_Number = table_Number;
+        this.idBill = idBill; // Đảm bảo rằng idBill đã được khởi tạo
+        initComponents();
+        displayidBill();
+        createTables();
+        displayTableName();
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -212,13 +217,13 @@ private javax.swing.JPanel tablePanel;
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         
-   
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
-private void displayTableName() {
+
+    private void displayTableName() {
         try {
             MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
             MongoDatabase database = mongoClient.getDatabase("restaurant");
@@ -235,21 +240,61 @@ private void displayTableName() {
             JOptionPane.showMessageDialog(null, "Error retrieving table name. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    private Document getBillByTableNumber(int tableNumber) {
-    Document billDocument = null;
+    
+    private void displayidBill() {
     try {
         MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
         MongoDatabase database = mongoClient.getDatabase("restaurant");
         MongoCollection<Document> billCollection = database.getCollection("bill");
-
-        // Query the bill based on table number
-        billDocument = billCollection.find(new Document("_id", tableNumber)).first();
+        
+        // Assuming idBill is an ObjectId field
+        Document billDocument = billCollection.find(new Document("idBill", idBill)).first();
+        if (billDocument != null) {
+            jTextField1.setText("ID: " + idBill);
+        }
     } catch (Exception e) {
         e.printStackTrace();
+        jTextField1.setText("lỗi");
         JOptionPane.showMessageDialog(null, "Error retrieving bill information. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
     }
-    return billDocument;
 }
+//Update hóa đơn
+    private void updateOrderInBill(ObjectId idBill, Document foodDocument) {
+        try {
+            MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+            MongoDatabase database = mongoClient.getDatabase("restaurant");
+            MongoCollection<Document> billCollection = database.getCollection("bill");
+
+            // Find the bill with the specified idBill
+            Document query = new Document("idBill", idBill);
+            Document billDocument = billCollection.find(query).first();
+
+            // Append the foodDocument to the "order" array in the bill
+            List<Document> orderList = (List<Document>) billDocument.get("order");
+            orderList.add(foodDocument);
+
+            // Update the bill in MongoDB
+            billCollection.updateOne(query, new Document("$set", new Document("order", orderList)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error updating order in bill. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+//    private Document getBillByidBill(int tableNumber) {
+//    Document billDocument = null;
+//    try {
+//        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+//        MongoDatabase database = mongoClient.getDatabase("restaurant");
+//        MongoCollection<Document> billCollection = database.getCollection("bill");
+//
+//        // Query the bill based on table number
+//        billDocument = billCollection.find(new Document("idBill", idBill)).first();
+//    } catch (Exception e) {
+//        e.printStackTrace();
+//        JOptionPane.showMessageDialog(null, "Error retrieving bill information. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+//    }
+//    return billDocument;
+//}
 
 public void createTables() {
     SwingUtilities.invokeLater(new Runnable() {
@@ -274,7 +319,7 @@ public void createTables() {
                      // Display the first foodName in the jTextField1
                  
 
-                    JLabel status1 = new JLabel(foodName + " - status: " + status);
+                    JLabel status1 = new JLabel("   " + foodName + " - " + status);
                     JPanel tablePanelItem = new JPanel(new BorderLayout());
                       // Add Increase and Decrease buttons
                     JButton increaseButton = new JButton("+");
@@ -431,13 +476,28 @@ public void createTables() {
 }
 
                     // Set the foreground color to make the text visible on the background
-                    status1.setForeground(Color.WHITE);
+                    status1.setForeground(Color.BLUE);
 
                     // Set other properties, e.g., opaque to make the background color visible
                     status1.setOpaque(true);
 tablePanel.add(tablePanelItem);
-JTextField quantityField = new JTextField(5); // 5 là chiều rộng của trường văn bản
+JTextField quantityField = new JTextField(2); // 5 là chiều rộng của trường văn bản
+    quantityField.setText("0"); // Set initial quantity to 0
+    increaseButton.addActionListener(e -> {
+        // Increment the quantity when the + button is clicked
+        int currentQuantity = Integer.parseInt(quantityField.getText());
+        quantityField.setText(String.valueOf(currentQuantity + 1));
+    });
 
+    decreaseButton.addActionListener(e -> {
+        // Decrement the quantity, but not below 0, when the - button is clicked
+        int currentQuantity = Integer.parseInt(quantityField.getText());
+        if (currentQuantity > 0) {
+            quantityField.setText(String.valueOf(currentQuantity - 1));
+        }
+    });
+    
+    
 // Tạo một panel phụ để chứa hai nút
 JPanel buttonPanel1 = new JPanel();
 buttonPanel1.setLayout(new FlowLayout()); // Sử dụng FlowLayout để nút nằm cạnh nhau
