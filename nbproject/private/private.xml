@@ -3,23 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
-            <file>file:/C:/odoo/Java/Java_manage_restaurant_new/src/view/Adminqualymonan.java</file>
-            <file>file:/C:/odoo/Java/Java_manage_restaurant_new/src/view/GoiMon.java</file>
-            <file>file:/C:/odoo/Java/Java_manage_restaurant_new/src/view/ThanhToan.java</file>
-            <file>file:/C:/odoo/Java/Java_manage_restaurant_new/src/view/Admin.java</file>
-            <file>file:/C:/odoo/Java/Java_manage_restaurant_new/src/view/Interface.java</file>
-            <file>file:/C:/odoo/Java/Java_manage_restaurant_new/src/view/Login.java</file>
-            <file>file:/C:/odoo/Java/Java_manage_restaurant_new/src/view/DatBan.java</file>
-=======
+            <file>file:/C:/Users/PC/Desktop/Manage_Restaurant_Mongodb/Java_manage_restaurant_new/src/view/GoiMon.java</file>
+            <file>file:/C:/Users/PC/Desktop/Manage_Restaurant_Mongodb/Java_manage_restaurant_new/src/view/ThongTinNhanVien.java</file>
             <file>file:/C:/Users/PC/Desktop/Manage_Restaurant_Mongodb/Java_manage_restaurant_new/src/view/Adminqualymonan.java</file>
+            <file>file:/C:/Users/PC/Desktop/Manage_Restaurant_Mongodb/Java_manage_restaurant_new/src/view/Signup.java</file>
+            <file>file:/C:/Users/PC/Desktop/Manage_Restaurant_Mongodb/Java_manage_restaurant_new/src/view/Interface.java</file>
             <file>file:/C:/Users/PC/Desktop/Manage_Restaurant_Mongodb/Java_manage_restaurant_new/src/view/DatBan.java</file>
-            <file>file:/C:/Users/PC/Desktop/Manage_Restaurant_Mongodb/Java_manage_restaurant_new/src/view/AddFood.java</file>
+            <file>file:/C:/Users/PC/Desktop/Manage_Restaurant_Mongodb/Java_manage_restaurant_new/src/view/Login.java</file>
             <file>file:/C:/Users/PC/Desktop/Manage_Restaurant_Mongodb/Java_manage_restaurant_new/src/view/Adminqualyhoadon.java</file>
             <file>file:/C:/Users/PC/Desktop/Manage_Restaurant_Mongodb/Java_manage_restaurant_new/src/view/Adminqualynhanvien.java</file>
+            <file>file:/C:/Users/PC/Desktop/Manage_Restaurant_Mongodb/Java_manage_restaurant_new/src/view/ThanhToan.java</file>
             <file>file:/C:/Users/PC/Desktop/Manage_Restaurant_Mongodb/Java_manage_restaurant_new/src/view/AddNV.java</file>
             <file>file:/C:/Users/PC/Desktop/Manage_Restaurant_Mongodb/Java_manage_restaurant_new/src/view/Admin.java</file>
->>>>>>> origin/feat/UI
         </group>
     </open-files>
 </project-private>
