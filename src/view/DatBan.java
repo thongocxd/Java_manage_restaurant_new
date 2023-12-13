@@ -36,7 +36,10 @@ import view.GoiMon;
  */
 public class DatBan extends javax.swing.JFrame {
 private ObjectId idBill; // Khai báo idBill ở đây
-    
+
+public ObjectId getIdBill(){
+    return idBill;
+}
     // Add this line to declare the tablePanel variable
 private javax.swing.JPanel tablePanel;
 private Login loginForm;
@@ -329,9 +332,8 @@ public void createTables() {
         createNewBill(tableNumber);
         // Add code to handle the action when the "Gọi Món" button is clicked
         System.out.println("Gọi Món clicked for table number: " + tableNumber);
-        GoiMon goiMonFrame = new GoiMon(tableNumber);
-        goiMonFrame.setVisible(true);
-        dispose();  // Close the current form
+        openGoiMon(tableNumber);
+
     });
 
     // Add "Hủy Bàn" button
@@ -376,8 +378,7 @@ public void createTables() {
                      createNewBill(tableNumber);
                     // Add code to handle the action when the "Gọi Món" button is clicked
                     System.out.println("Gọi Món clicked for table number: " + tableNumber);
-                    GoiMon goiMonFrame = new GoiMon(tableNumber);
-                    goiMonFrame.setVisible(true);
+                    openGoiMon(tableNumber);
                     dispose();  // Close the current form
                 });
 
@@ -459,6 +460,13 @@ public void createTables() {
             JOptionPane.showMessageDialog(null, "Error updating table status. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    public void openGoiMon(int tableNumber) {
+    // Assuming idBill is already generated/set in DatBan class
+    GoiMon goiMonFrame = new GoiMon(tableNumber, this.idBill);
+    goiMonFrame.setVisible(true);
+    this.dispose(); // or other logic as per your application flow
+}
     
      private void tableButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // Handle table button click event if needed

@@ -10,13 +10,38 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import java.util.List;
 import org.bson.Document;
 import javax.swing.*;
+import org.bson.types.ObjectId;
+import org.bson.types.ObjectId;
+import view.GoiMon;
+import view.DatBan;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.UpdateOptions;
 /**
  *
  * @author kevin
  */
 public class ThanhToan extends javax.swing.JFrame {
+    private javax.swing.JPanel tablePanel;
+    private int table_Number;
+    
+    // Assuming you have a valid ObjectId to pass
+    ObjectId someObjectId = new ObjectId(); // Example ObjectId, replace with a valid one
+
+    // Create an instance of DatBan with the idBill
+    
+    DatBan datBanInstance = new DatBan();
+    
+    public ObjectId getIdBill(){
+    return idBill;
+    }
+    
+
+    // Now you can call getIdBill() on this instance
+    ObjectId idBill = datBanInstance.getIdBill();
 
     /**
      * Creates new form ThanhToan
@@ -24,6 +49,12 @@ public class ThanhToan extends javax.swing.JFrame {
     public ThanhToan() {
         initComponents();
           // Kết nối tới cơ sở dữ liệu MongoDB và lấy dữ liệu từ collection "bill"
+        displayBillInfoInTextField();
+    }
+    public ThanhToan(int table_Number, ObjectId idBill) {
+        this.table_Number = table_Number;
+        this.idBill = idBill; // Đảm bảo rằng idBill đã được khởi tạo
+        initComponents();
         displayBillInfoInTextField();
     }
 
@@ -37,97 +68,99 @@ public class ThanhToan extends javax.swing.JFrame {
     private void initComponents() {
 
         jTextField1 = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTextField1.setText("jTextField1");
+        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTextField1ActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
+        jLabel1.setText("HÓA ĐƠN");
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jTextField1)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 203, Short.MAX_VALUE)
+                        .addComponent(jLabel1)
+                        .addGap(206, 206, 206))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-   private void displayBillInfoInTextField() {
+    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField1ActionPerformed
+
+    private void displayBillInfoInTextField() {
     try {
         com.mongodb.client.MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
         MongoDatabase database = mongoClient.getDatabase("restaurant");
         MongoCollection<Document> collection = database.getCollection("bill");
 
-        // Lấy một bản ghi từ collection "bill" (điều này phải được điều chỉnh cho phù hợp)
-        Document billDocument = collection.find(new Document("_id", new org.bson.types.ObjectId("65783d4b3908780de642d77c"))).first();
+        Document billDocument = collection.find(new Document("idBill", this.idBill)).first();
 
         if (billDocument != null) {
-            // Lấy dữ liệu từ Document và hiển thị nó trong jTextField1
-            String billInfo = billDocument.toJson();
-            jTextField1.setText(billInfo);
-        } else {
-            // Xử lý khi không tìm thấy dữ liệu
-            jTextField1.setText("Không tìm thấy hóa đơn");
-        }
+            StringBuilder billInfo = new StringBuilder();
 
-        // Đóng kết nối MongoClient khi hoàn thành
-        mongoClient.close();
+            // Extracting and formatting each field
+            Document bill = (Document) billDocument.get("bill");
+            List<Document> order = (List<Document>) billDocument.get("order");
+            
+            billInfo.append("Bill ID: ").append(billDocument.getObjectId("idBill").toHexString()).append("\n");
+            billInfo.append("Table Number: ").append(billDocument.getInteger("table_number")).append("\n");
+            billInfo.append("Bill Date: ").append(bill.get("bill_date")).append("\n");
+            billInfo.append("Total Price: ").append(bill.get("total_price")).append("\n");
+            billInfo.append("Payment Status: ").append(billDocument.getString("payment_status")).append("\n");
+            billInfo.append("Order Details:\n");
+
+            for (Document item : order) {
+                billInfo.append(" - Food ID: ").append(item.getInteger("foodId"))
+                        .append(", Quantity: ").append(item.getInteger("quantity")).append("\n");
+            }
+
+            // Setting the text to jTextField
+            jTextArea1.setText(billInfo.toString());
+        } else {
+            jTextArea1.setText("Bill not found");
+        }
     } catch (Exception e) {
         e.printStackTrace();
-        jTextField1.setText("Lỗi khi kết nối và lấy dữ liệu từ MongoDB");
+        jTextArea1.setText("Error connecting to MongoDB: " + e.getMessage());
     }
-}
-    public class ThanhToan1Export {
-    public static void main(String[] args) {
-        // Tạo một đối tượng Document tương ứng với dữ liệu bạn muốn xuất
-        Document thanhToanDocument = new Document();
-        thanhToanDocument.append("_id", new org.bson.types.ObjectId("65783d4b3908780de642d77c"));
-        thanhToanDocument.append("idBill", new org.bson.types.ObjectId("657842d288ce1c34761701f6"));
-        thanhToanDocument.append("table_number", 4);
-
-        Document billDocument = new Document();
-        billDocument.append("bill_date", "2023-12-12 18:00:27");
-        billDocument.append("total_price", null);
-
-        thanhToanDocument.append("bill", billDocument);
-        thanhToanDocument.append("order", new ArrayList<>());
-        thanhToanDocument.append("payment_status", "unpaid");
-
-        // Chuyển đối tượng Document thành chuỗi JSON
-        String json = thanhToanDocument.toJson();
-
-        // In ra chuỗi JSON
-        System.out.println(json);
-    }
-}
-    
+}   
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ThanhToan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ThanhToan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ThanhToan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ThanhToan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -138,6 +171,9 @@ public class ThanhToan extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }

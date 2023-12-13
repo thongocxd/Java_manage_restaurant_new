@@ -19,6 +19,7 @@ import java.awt.FlowLayout;
 import java.util.List;
 import javax.swing.JTextField;
 import org.bson.types.ObjectId; // Import ObjectId class
+import view.DatBan;
 
 
 /**
@@ -30,23 +31,44 @@ import org.bson.types.ObjectId; // Import ObjectId class
  * @param <cmdAdj>
  */
 public class GoiMon extends javax.swing.JFrame {
-     private int table_Number;
-    private ObjectId idBill; // Declare idBill as ObjectId
+    private int table_Number;
+//    System.out.println(idBill);
 
+    // Assuming you have a valid ObjectId to pass
+    ObjectId someObjectId = new ObjectId(); // Example ObjectId, replace with a valid one
+
+    // Create an instance of DatBan with the idBill
+    DatBan datBanInstance = new DatBan();
+
+    // Now you can call getIdBill() on this instance
+    ObjectId idBill = datBanInstance.getIdBill();
     
+    public ObjectId getIdBill(){
+    return idBill;
+}
+    
+
+    // Print idBill    
     // Add this line to declare the tablePanel variable
-private javax.swing.JPanel tablePanel;
+    private javax.swing.JPanel tablePanel;
 
     /**
      * Creates new form DatBan
      */
+    
+    public GoiMon() {
+    }
     public GoiMon(int table_Number) {
+        this(table_Number, null); // Call the main constructor with null idBill
+    }
+    public GoiMon(int table_Number, ObjectId idBill) {
         this.table_Number = table_Number;
         this.idBill = idBill; // Đảm bảo rằng idBill đã được khởi tạo
         initComponents();
         displayidBill();
         createTables();
         displayTableName();
+        System.out.println(idBill);
     }
 
 
@@ -199,6 +221,11 @@ private javax.swing.JPanel tablePanel;
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
+            // Create an instance of ThanhToan class and pass necessary parameters
+            ThanhToan thanhToan = new ThanhToan(this.table_Number, this.idBill);
+            thanhToan.setVisible(true); // Display the ThanhToan frame
+//            this.dispose(); // Optionally, close the current GoiMon frame
+        
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -224,6 +251,12 @@ private javax.swing.JPanel tablePanel;
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
+    public void openThanhToan(int tableNumber) {
+    // Assuming idBill is already generated/set in DatBan class
+    ThanhToan thanhToanFrame = new ThanhToan(tableNumber, idBill);
+    thanhToanFrame.setVisible(true);
+    this.dispose();
+    }
     private void displayTableName() {
         try {
             MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
@@ -234,7 +267,7 @@ private javax.swing.JPanel tablePanel;
             if (tableDocument != null) {
                 String tableName = tableDocument.getString("table_Name");
                 jButton1.setText(tableName); // Hiển thị tên bàn trên nút
-                jTextField1.setText("Bàn số " + table_Number ); // Hiển thị số và tên bàn trong jTextField1
+                jTextField1.setText("Bàn số  " + table_Number ); // Hiển thị số và tên bàn trong jTextField1
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -269,13 +302,19 @@ private javax.swing.JPanel tablePanel;
             // Find the bill with the specified idBill
             Document query = new Document("idBill", idBill);
             Document billDocument = billCollection.find(query).first();
+            System.out.println(foodDocument);
 
-            // Append the foodDocument to the "order" array in the bill
-            List<Document> orderList = (List<Document>) billDocument.get("order");
-            orderList.add(foodDocument);
-
-            // Update the bill in MongoDB
-            billCollection.updateOne(query, new Document("$set", new Document("order", orderList)));
+            if (billDocument != null) {
+                // Proceed with updating the order
+                List<Document> orderList = (List<Document>) billDocument.get("order");
+                orderList.add(foodDocument);
+                // Update the bill in MongoDB
+                            System.out.print("dayneeeeeeeeeeeeeeeeeeeee");
+                billCollection.updateOne(query, new Document("$set", new Document("order", orderList)));
+            } else {
+                System.out.println("Bill not found for ID: " + idBill);
+                // Handle the case where the bill is not found
+            }
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error updating order in bill. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -306,13 +345,14 @@ public void createTables() {
                 MongoCollection<Document> collection = database.getCollection("food");
               
 
-                tablePanel = new JPanel(new GridLayout(5, 0)); // Adjust grid layout as needed
+                tablePanel = new JPanel(new GridLayout(4, 0)); // Adjust grid layout as needed
                 tablePanel.setBounds(150, 50, 900, 500);
 
                 for (Document document : collection.find()) {
                     String foodName = document.getString("foodName");
                     String price = document.getString("price");
                     String status = document.getString("status");
+                    Integer foodId = document.getInteger("foodId");
                     
 
                     // Debugging print
@@ -476,11 +516,11 @@ public void createTables() {
     tablePanelItem.repaint();
 }
 
-                    // Set the foreground color to make the text visible on the background
-                    status1.setForeground(Color.BLUE);
+// Set the foreground color to make the text visible on the background
+status1.setForeground(Color.BLUE);
 
-                    // Set other properties, e.g., opaque to make the background color visible
-                    status1.setOpaque(true);
+// Set other properties, e.g., opaque to make the background color visible
+status1.setOpaque(true);
 tablePanel.add(tablePanelItem);
 JTextField quantityField = new JTextField(2); // 5 là chiều rộng của trường văn bản
     quantityField.setText("0"); // Set initial quantity to 0
@@ -497,22 +537,57 @@ JTextField quantityField = new JTextField(2); // 5 là chiều rộng của trư
             quantityField.setText(String.valueOf(currentQuantity - 1));
         }
     });
-    
-    
-// Tạo một panel phụ để chứa hai nút
+JButton addOrder = new JButton("Gọi Món");
+
+addOrder.addActionListener(orderEvent -> {
+    try {
+        // Get the quantity from the quantityField
+        int quantity = Integer.parseInt(quantityField.getText());
+        // Create a Document representing the order
+        Document orderDocument = new Document();
+        orderDocument.append("foodId", foodId)
+                      .append("quantity", quantity);
+
+        // Add the order to the current bill (assuming you have the bill ID)
+        System.out.println("okkkkkkkkkkkkkkkkkkkkkkkkkkkkk" + idBill);
+        updateOrderInBill(idBill, orderDocument);
+
+        // Print a message or perform other actions as needed
+        System.out.println("Added order to the current bill: " + foodName + " - Quantity: " + quantity);
+
+    } catch (NumberFormatException e) {
+        // Handle the case where the quantityField doesn't contain a valid number
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Invalid quantity. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
+
+    } catch (Exception e) {
+        // Handle other exceptions
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(null, "Error updating order in bill. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+});
+// Create a panel for quantity-related buttons
+JPanel quantityPanel = new JPanel();
+quantityPanel.setLayout(new FlowLayout()); // Use FlowLayout to arrange components from left to right
+quantityPanel.add(decreaseButton);
+quantityPanel.add(quantityField); // Add quantity field
+quantityPanel.add(increaseButton);
+
+// Create a new panel for both "Gọi Món" and quantity-related buttons
 JPanel buttonPanel1 = new JPanel();
-buttonPanel1.setLayout(new FlowLayout()); // Sử dụng FlowLayout để nút nằm cạnh nhau
-buttonPanel1.add(decreaseButton);
-buttonPanel1.add(quantityField); // Thêm trường số lượng giữa hai nút
-buttonPanel1.add(increaseButton);
+buttonPanel1.setLayout(new BorderLayout());
 
-// Thêm các thành phần vào tablePanelItem
+// Add "Gọi Món" button to the top of the new panel
+buttonPanel1.add(addOrder, BorderLayout.SOUTH);
+
+// Add the quantity-related buttons panel to the center of the new panel
+buttonPanel1.add(quantityPanel, BorderLayout.CENTER);
+
+// Add components to the tablePanelItem
 tablePanelItem.setLayout(new BorderLayout());
-tablePanelItem.add(status1, BorderLayout.NORTH); // Đặt status1 ở phía trên cùng
-tablePanelItem.add(imageLabel, BorderLayout.CENTER); // Ảnh ở trung tâm
-tablePanelItem.add(buttonPanel1, BorderLayout.SOUTH); // Đặt panel chứa hai nút ở phía dưới cùng
-
-
+tablePanelItem.add(status1, BorderLayout.NORTH); // Place status1 at the top
+tablePanelItem.add(imageLabel, BorderLayout.CENTER); // Center the image
+tablePanelItem.add(buttonPanel1, BorderLayout.SOUTH); // Add the panel with buttons at the bottom
                   
                 }
 
@@ -616,4 +691,5 @@ tablePanelItem.add(buttonPanel1, BorderLayout.SOUTH); // Đặt panel chứa hai
     private javax.swing.JPanel jPanel2;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
+
 }
