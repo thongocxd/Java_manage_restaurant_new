@@ -35,7 +35,7 @@ import view.GoiMon;
  * @param <cmdAdj>
  */
 public class DatBan extends javax.swing.JFrame {
-    
+    public ObjectId idNV;
      
     private ObjectId idBill; // Khai báo idBill ở đây
 
@@ -48,11 +48,18 @@ private Login loginForm;
     /**
      * Creates new form DatBan
      */
-    public DatBan() {
+    public DatBan(ObjectId idNV) {
+        this.idNV = idNV;
         initComponents();
         createTables();
         loginForm = new Login();
-
+    }
+    
+  
+        public DatBan() {
+        initComponents();
+        createTables();
+        loginForm = new Login();
     }
 
     /**
@@ -71,6 +78,7 @@ private Login loginForm;
         lbTitle = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         canvas1 = new java.awt.Canvas();
+        jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -106,7 +114,6 @@ private Login loginForm;
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         lbTitle.setForeground(new java.awt.Color(108, 91, 123));
         lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbTitle.setText("Title");
 
         jPanel1.setBackground(new java.awt.Color(204, 255, 255));
 
@@ -127,23 +134,36 @@ private Login loginForm;
                 .addGap(262, 262, 262))
         );
 
+        jButton4.setText("Quay Lại");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lbTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addContainerGap()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE))
+                                        .addGap(0, 0, Short.MAX_VALUE)))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(jButton4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -160,6 +180,8 @@ private Login loginForm;
                         .addGap(50, 50, 50)
                         .addComponent(lbTitle)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -200,6 +222,13 @@ Login loginform = new Login();
         // TODO add your handling code here:
         createTables();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        Interface interface1 = new Interface(idNV);
+        interface1.setVisible(true);
+        this.dispose();           // TODO add your handling code here:
+    }//GEN-LAST:event_jButton4ActionPerformed
 
 private void createNewBill(int tableNumber) {
     try {
@@ -291,15 +320,27 @@ public void createTables() {
                                 // Add "Hủy Bàn" button
                                 JButton cancelButton = new JButton("Hủy Bàn");
                                 cancelButton.addActionListener(cancelEvent -> {
-                                     int result1 = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + tableNumber + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
-                                     updateTableStatus(tableNumber, "Ban Trong");
-                                    actionButton.setText("Đặt Bàn");
-                                     // Remove "Gọi Món" and "Hủy Bàn" buttons
-                                    buttonPanel.removeAll();
-                                    buttonPanel.add(actionButton);
-                                    // Repaint the panel
-                                    tablePanelItem.revalidate();
-                                    tablePanelItem.repaint();
+                                    // Confirm cancellation with a dialog
+                                    int cancelResult = JOptionPane.showConfirmDialog(
+                                        null, 
+                                        "Bạn có chắc chắn muốn hủy bàn số " + tableNumber + " không?", 
+                                        "Xác Nhận Hủy Bàn", 
+                                        JOptionPane.YES_NO_OPTION
+                                    );
+
+                                    // Check if the user confirmed the cancellation
+                                    if (cancelResult == JOptionPane.YES_OPTION) {
+                                        updateTableStatus(tableNumber, "Ban Trong");
+                                        actionButton.setText("Đặt Bàn");
+
+                                        // Remove "Gọi Món" and "Hủy Bàn" buttons
+                                        buttonPanel.removeAll();
+                                        buttonPanel.add(actionButton);
+
+                                        // Repaint the panel
+                                        tablePanelItem.revalidate();
+                                        tablePanelItem.repaint();
+                                    }
                                 });
 
                                 // Add "Gọi Món" button
@@ -308,7 +349,7 @@ public void createTables() {
                                       createNewBill(tableNumber);
                                     // Add code to handle the action when the "Gọi Món" button is clicked
                                     System.out.println("Gọi Món clicked for table number: " + tableNumber);
-                                    GoiMon goiMonFrame = new GoiMon(tableNumber);
+                                    GoiMon goiMonFrame = new GoiMon(tableNumber,idNV);
                                     goiMonFrame.setVisible(true);
                                     dispose();  // Close the current form
                                 });
@@ -330,74 +371,79 @@ public void createTables() {
         createNewBill(tableNumber);
         // Add code to handle the action when the "Gọi Món" button is clicked
         System.out.println("Gọi Món clicked for table number: " + tableNumber);
-        openGoiMon(tableNumber);
+        openGoiMon(tableNumber,idNV);
 
     });
 
     // Add "Hủy Bàn" button
     JButton cancelButton = new JButton("Hủy Bàn");
     cancelButton.addActionListener(cancelEvent -> {
-        // Add code to handle the action when the "Hủy Bàn" button is clicked
-        updateTableStatus(tableNumber, "Ban Trong");
-        actionButton.setText("Đặt Bàn");
+        
+        int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn hủy bàn số " + tableNumber + "?", "Xác Nhận Hủy Bàn", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            // Add code to handle the action when the "Hủy Bàn" button is clicked
+updateTableStatus(tableNumber, "Ban Trong");
+actionButton.setText("Đặt Bàn");
 
-        // Remove "Gọi Món" and "Hủy Bàn" buttons
-        buttonPanel.removeAll();
+// Remove "Gọi Món" and "Hủy Bàn" buttons
+buttonPanel.removeAll();
 
-        // Add "Đặt Bàn" button
-        actionButton.addActionListener(e -> {
-            // Display a confirmation dialog
-            int result = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + tableNumber + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
+// Add "Đặt Bàn" button
+actionButton.addActionListener(e -> {
+    // Display a confirmation dialog
+    int result = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + tableNumber + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
 
-            if (result == JOptionPane.YES_OPTION) {
-                // Update the table status in the database (assuming you have a method to update the database)
-                updateTableStatus(tableNumber, "Ban Da Dat");
+    if (result == JOptionPane.YES_OPTION) {
+        // Update the table status in the database (assuming you have a method to update the database)
+        updateTableStatus(tableNumber, "Ban Da Dat");
 
-                // Change the button text to "Gọi Món"
-                actionButton.setText("Gọi Món");
+        // Change the button text to "Gọi Món"
+        actionButton.setText("Gọi Món");
 
-                // Add "Hủy Bàn" button
-                JButton newCancelButton = new JButton("Hủy Bàn");
-                newCancelButton.addActionListener(newCancelEvent -> {
-                    updateTableStatus(tableNumber, "Ban Trong");
-                    actionButton.setText("Đặt Bàn");
-                    // Remove "Gọi Món" and "Hủy Bàn" buttons
-                    buttonPanel.removeAll();
-                    // Add "Đặt Bàn" button
-                    buttonPanel.add(actionButton);
-                    // Repaint the panel
-                    tablePanelItem.revalidate();
-                    tablePanelItem.repaint();
-                });
-
-                // Add "Gọi Món" button
-                JButton newOrderButton = new JButton("Gọi Món");
-                newOrderButton.addActionListener(newOrderEvent -> {
-                     createNewBill(tableNumber);
-                    // Add code to handle the action when the "Gọi Món" button is clicked
-                    System.out.println("Gọi Món clicked for table number: " + tableNumber);
-                    openGoiMon(tableNumber);
-                    dispose();  // Close the current form
-                });
-
-                // Add buttons to the buttonPanel   
-                buttonPanel.removeAll();
-                buttonPanel.add(newOrderButton);
-                buttonPanel.add(newCancelButton);
-
-
-                // Repaint the panel
-                tablePanelItem.revalidate();
-                tablePanelItem.repaint();
-            }
+        // Add "Hủy Bàn" button
+        JButton newCancelButton = new JButton("Hủy Bàn");
+        newCancelButton.addActionListener(newCancelEvent -> {
+            updateTableStatus(tableNumber, "Ban Trong");
+            actionButton.setText("Đặt Bàn");
+            // Remove "Gọi Món" and "Hủy Bàn" buttons
+            buttonPanel.removeAll();
+            // Add "Đặt Bàn" button
+            buttonPanel.add(actionButton);
+            // Repaint the panel
+            tablePanelItem.revalidate();
+            tablePanelItem.repaint();
         });
 
-        // Add the actionButton to the buttonPanel
-        buttonPanel.add(actionButton);
+        // Add "Gọi Món" button
+        JButton newOrderButton = new JButton("Gọi Món");
+        newOrderButton.addActionListener(newOrderEvent -> {
+                createNewBill(tableNumber);
+//                    int createResult = JOptionPane.showConfirmDialog(null, "Xác nhận gọi món cho bàn số " + tableNumber + "? (Không thể hủy bàn sau khi gọi mon)", "Xác Nhận", JOptionPane.YES_NO_OPTION);
+            // Add code to handle the action when the "Gọi Món" button is clicked
+            System.out.println("Gọi Món clicked for table number: " + tableNumber);
+            openGoiMon(tableNumber,idNV);
+            dispose();  // Close the current form
+        });
 
-        // Repaint the panel    
+        // Add buttons to the buttonPanel   
+        buttonPanel.removeAll();
+        buttonPanel.add(newOrderButton);
+        buttonPanel.add(newCancelButton);
+
+
+        // Repaint the panel
         tablePanelItem.revalidate();
         tablePanelItem.repaint();
+    }
+});
+
+// Add the actionButton to the buttonPanel
+buttonPanel.add(actionButton);
+
+// Repaint the panel    
+tablePanelItem.revalidate();
+tablePanelItem.repaint();
+    }
     });
 
     // Add buttons to the buttonPanel
@@ -462,9 +508,9 @@ public void createTables() {
         }
     }
     
-    public void openGoiMon(int tableNumber) {
+    public void openGoiMon(int tableNumber,ObjectId idNV) {
     // Assuming idBill is already generated/set in DatBan class
-    GoiMon goiMonFrame = new GoiMon(tableNumber, this.idBill);
+    GoiMon goiMonFrame = new GoiMon(tableNumber, this.idBill,this.idNV);
     goiMonFrame.setVisible(true);
     this.dispose(); // or other logic as per your application flow
 }
@@ -518,6 +564,7 @@ public void createTables() {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lbTitle;

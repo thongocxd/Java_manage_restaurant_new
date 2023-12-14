@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import javax.swing.JOptionPane;
 import java.awt.FlowLayout;
 import java.util.List;
@@ -33,12 +34,13 @@ import view.DatBan;
 public class GoiMon extends javax.swing.JFrame {
     private int table_Number;
 //    System.out.println(idBill);
+    public ObjectId idNV;
 
     // Assuming you have a valid ObjectId to pass
     ObjectId someObjectId = new ObjectId(); // Example ObjectId, replace with a valid one
 
     // Create an instance of DatBan with the idBill
-    DatBan datBanInstance = new DatBan();
+    DatBan datBanInstance = new DatBan(idNV);
 
     // Now you can call getIdBill() on this instance
     ObjectId idBill = datBanInstance.getIdBill();
@@ -59,9 +61,22 @@ public class GoiMon extends javax.swing.JFrame {
     public GoiMon() {
     }
     public GoiMon(int table_Number) {
-        this(table_Number, null); // Call the main constructor with null idBill
+        this.table_Number = table_Number;
+        initComponents();
+        displayidBill();
+        createTables();
+        displayTableName();
     }
-    public GoiMon(int table_Number, ObjectId idBill) {
+    public GoiMon(int table_Number, ObjectId idNV) {
+        this.idNV = idNV;
+        this.table_Number = table_Number;
+        initComponents();
+        displayidBill();
+        createTables();
+        displayTableName();
+    }
+    public GoiMon(int table_Number, ObjectId idBill, ObjectId idNV) {
+        this.idNV = idNV;
         this.table_Number = table_Number;
         this.idBill = idBill; // Đảm bảo rằng idBill đã được khởi tạo
         initComponents();
@@ -224,11 +239,12 @@ public class GoiMon extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-         this.dispose();  // Close the current form
 
     // Create an instance of DatBan and show it
-    DatBan datBanForm = new DatBan();
+    DatBan datBanForm = new DatBan(idNV);
     datBanForm.setVisible(true);
+    this.dispose();  // Close the current form
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -348,8 +364,9 @@ public void createTables() {
                     String price = document.getString("price");
                     String status = document.getString("status");
                     Integer foodId = document.getInteger("foodId");
+                    String images = document.getString("image");
                     
-
+                    System.out.println(images);
                     // Debugging print
                     System.out.println("Food name: " + foodName + ", Price: " + price);
                      // Display the first foodName in the jTextField1
@@ -369,7 +386,9 @@ public void createTables() {
                     String imagePath = document.getString("imagePath");
                     ImageIcon imageIcon = new ImageIcon(imagePath);
                     JLabel imageLabel = new JLabel(imageIcon);
-                    imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/caiban/images.jpg")));
+                    imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource(images)));
+                    imageLabel.setPreferredSize(new Dimension(300, 300));
+                    imageLabel.setMinimumSize(new Dimension(300, 300));
                     
                     
                     // Create a panel for buttons and add it to the SOUTH position

@@ -35,7 +35,7 @@ public class ThanhToan extends javax.swing.JFrame {
 
     // Create an instance of DatBan with the idBill
     
-    DatBan datBanInstance = new DatBan();
+    DatBan datBanInstance = new DatBan(idNV);
     
     public ObjectId getIdBill(){
     return idBill;
