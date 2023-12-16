@@ -185,6 +185,10 @@ public class Login extends javax.swing.JFrame {
             Interface interfaceForm = new Interface(idNV);
             interfaceForm.setVisible(true);
         }
+        else if(role==3){
+            QLyKho QLyKhoForm = new QLyKho();
+            QLyKhoForm.setVisible(true);
+        }
         this.dispose(); // Close the current window (Login)
     } else {
         // Login failed
