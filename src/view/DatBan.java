@@ -1,12 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoCollection;
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
 import com.mongodb.client.model.UpdateOptions;
 import javax.swing.SwingUtilities;
 import javax.swing.ImageIcon;
@@ -230,34 +228,68 @@ Login loginform = new Login();
         this.dispose();           // TODO add your handling code here:
     }//GEN-LAST:event_jButton4ActionPerformed
 
-private void createNewBill(int tableNumber) {
+    private void createNewBill(int tableNumber) {
     try {
         MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
         MongoDatabase database = mongoClient.getDatabase("restaurant");
         MongoCollection<Document> billCollection = database.getCollection("bill");
 
-        // Generate a new ObjectId for idBill
-        idBill = new ObjectId(); // Sử dụng biến instance idBill đã khai báo trước đó
+        // Kiểm tra xem có hóa đơn nào chưa thanh toán cho bàn này không
+        Document existingBill = billCollection.find(
+            and(eq("table_number", tableNumber), eq("payment_status", "unpaid"))
+        ).first();
 
-        Document newBill = new Document("table_number", tableNumber)
-                .append("idBill", idBill) // Add idBill field
-                .append("bill", new Document("bill_date", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                        .append("total_price", null))
-                .append("order", Arrays.asList()) // Danh sách món ăn trống
-                .append("payment_status", "unpaid");
-        billCollection.insertOne(newBill);
+        ObjectId idBill;
+        String billId;
 
-        // Lưu trữ ID của hóa đơn mới tạo để sử dụng sau này
-        String billId = newBill.getObjectId("idBill").toString();
-        System.out.println("Searching for idBill: " + idBill); // In ra giá trị của idBill
+        if (existingBill != null) {
+            // Lấy ID của hóa đơn hiện tại
+            idBill = existingBill.getObjectId("idBill");
+            billId = idBill.toString();
+            System.out.println("An unpaid bill already exists for table number: " + tableNumber + ". Bill ID: " + billId);
+            // Có thể thêm logic cập nhật hóa đơn ở đây nếu cần
+        } else {
+            // Tạo hóa đơn mới
+            idBill = new ObjectId();
+            Document newBill = new Document("table_number", tableNumber)
+                    .append("idBill", idBill)
+                    .append("bill", new Document("bill_date", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                            .append("total_price", null))
+                    .append("order", Arrays.asList())
+                    .append("payment_status", "unpaid");
+            billCollection.insertOne(newBill);
 
-        System.out.println("New bill created for table number: " + tableNumber);
+            billId = idBill.toString();
+            System.out.println("New bill created for table number: " + tableNumber + ". Bill ID: " + billId);
+        }
+
+        this.idBill = idBill;
+
     } catch (Exception e) {
         e.printStackTrace();
         JOptionPane.showMessageDialog(null, "Error creating new bill. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
 
+private boolean hasUnpaidBill(int tableNumber) {
+    // Kết nối với cơ sở dữ liệu và kiểm tra hóa đơn
+    // Giả sử bạn có một collection hóa đơn với trường "table_number" và "payment_status"
+    try {
+        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+        MongoDatabase database = mongoClient.getDatabase("restaurant");
+        MongoCollection<Document> billCollection = database.getCollection("bill");
+
+        Document unpaidBill = billCollection.find(
+            and(eq("table_number", tableNumber), eq("payment_status", "unpaid"))
+        ).first();
+
+        return unpaidBill != null;
+    } catch (Exception e) {
+        e.printStackTrace();
+        // Xử lý lỗi
+    }
+    return false;
+}
 
     
 public void createTables() {
@@ -377,75 +409,81 @@ public void createTables() {
 
     // Add "Hủy Bàn" button
     JButton cancelButton = new JButton("Hủy Bàn");
+    if (!hasUnpaidBill(tableNumber)) {
     cancelButton.addActionListener(cancelEvent -> {
         
         int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn hủy bàn số " + tableNumber + "?", "Xác Nhận Hủy Bàn", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             // Add code to handle the action when the "Hủy Bàn" button is clicked
-updateTableStatus(tableNumber, "Ban Trong");
-actionButton.setText("Đặt Bàn");
+        updateTableStatus(tableNumber, "Ban Trong");
+        actionButton.setText("Đặt Bàn");
 
-// Remove "Gọi Món" and "Hủy Bàn" buttons
-buttonPanel.removeAll();
-
-// Add "Đặt Bàn" button
-actionButton.addActionListener(e -> {
-    // Display a confirmation dialog
-    int result = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + tableNumber + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
-
-    if (result == JOptionPane.YES_OPTION) {
-        // Update the table status in the database (assuming you have a method to update the database)
-        updateTableStatus(tableNumber, "Ban Da Dat");
-
-        // Change the button text to "Gọi Món"
-        actionButton.setText("Gọi Món");
-
-        // Add "Hủy Bàn" button
-        JButton newCancelButton = new JButton("Hủy Bàn");
-        newCancelButton.addActionListener(newCancelEvent -> {
-            updateTableStatus(tableNumber, "Ban Trong");
-            actionButton.setText("Đặt Bàn");
-            // Remove "Gọi Món" and "Hủy Bàn" buttons
-            buttonPanel.removeAll();
-            // Add "Đặt Bàn" button
-            buttonPanel.add(actionButton);
-            // Repaint the panel
-            tablePanelItem.revalidate();
-            tablePanelItem.repaint();
-        });
-
-        // Add "Gọi Món" button
-        JButton newOrderButton = new JButton("Gọi Món");
-        newOrderButton.addActionListener(newOrderEvent -> {
-                createNewBill(tableNumber);
-//                    int createResult = JOptionPane.showConfirmDialog(null, "Xác nhận gọi món cho bàn số " + tableNumber + "? (Không thể hủy bàn sau khi gọi mon)", "Xác Nhận", JOptionPane.YES_NO_OPTION);
-            // Add code to handle the action when the "Gọi Món" button is clicked
-            System.out.println("Gọi Món clicked for table number: " + tableNumber);
-            openGoiMon(tableNumber,idNV);
-            dispose();  // Close the current form
-        });
-
-        // Add buttons to the buttonPanel   
+        // Remove "Gọi Món" and "Hủy Bàn" buttons
         buttonPanel.removeAll();
-        buttonPanel.add(newOrderButton);
-        buttonPanel.add(newCancelButton);
+
+        // Add "Đặt Bàn" button
+        actionButton.addActionListener(e -> {
+            // Display a confirmation dialog
+            int result = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + tableNumber + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
+
+            if (result == JOptionPane.YES_OPTION) {
+                // Update the table status in the database (assuming you have a method to update the database)
+                updateTableStatus(tableNumber, "Ban Da Dat");
+
+                // Change the button text to "Gọi Món"
+                actionButton.setText("Gọi Món");
+
+                // Add "Hủy Bàn" button
+                JButton newCancelButton = new JButton("Hủy Bàn");
+                newCancelButton.addActionListener(newCancelEvent -> {
+                    updateTableStatus(tableNumber, "Ban Trong");
+                    actionButton.setText("Đặt Bàn");
+                    // Remove "Gọi Món" and "Hủy Bàn" buttons
+                    buttonPanel.removeAll();
+                    // Add "Đặt Bàn" button
+                    buttonPanel.add(actionButton);
+                    // Repaint the panel
+                    tablePanelItem.revalidate();
+                    tablePanelItem.repaint();
+                });
+
+                // Add "Gọi Món" button
+                JButton newOrderButton = new JButton("Gọi Món");
+                newOrderButton.addActionListener(newOrderEvent -> {
+                        createNewBill(tableNumber);
+        //                    int createResult = JOptionPane.showConfirmDialog(null, "Xác nhận gọi món cho bàn số " + tableNumber + "? (Không thể hủy bàn sau khi gọi mon)", "Xác Nhận", JOptionPane.YES_NO_OPTION);
+                    // Add code to handle the action when the "Gọi Món" button is clicked
+                    System.out.println("Gọi Món clicked for table number: " + tableNumber);
+                    openGoiMon(tableNumber,idNV);
+                    dispose();  // Close the current form
+                });
+
+                // Add buttons to the buttonPanel   
+                buttonPanel.removeAll();
+                buttonPanel.add(newOrderButton);
+                buttonPanel.add(newCancelButton);
 
 
-        // Repaint the panel
+                // Repaint the panel
+                tablePanelItem.revalidate();
+                tablePanelItem.repaint();
+            }
+        });
+
+        // Add the actionButton to the buttonPanel
+        buttonPanel.add(actionButton);
+
+        // Repaint the panel    
         tablePanelItem.revalidate();
         tablePanelItem.repaint();
-    }
-});
-
-// Add the actionButton to the buttonPanel
-buttonPanel.add(actionButton);
-
-// Repaint the panel    
-tablePanelItem.revalidate();
-tablePanelItem.repaint();
-    }
-    });
-
+            }
+            });
+            buttonPanel.add(cancelButton);
+        } else {
+            // Có thể hiển thị thông báo hoặc làm mờ nút nếu có hóa đơn chưa thanh toán
+            cancelButton.setEnabled(false);
+            buttonPanel.add(cancelButton);
+        }
     // Add buttons to the buttonPanel
     buttonPanel.setBackground(new Color(216,250,216));
     buttonPanel.add(actionButton);
@@ -508,13 +546,11 @@ tablePanelItem.repaint();
         }
     }
     
-    public void openGoiMon(int tableNumber,ObjectId idNV) {
-    // Assuming idBill is already generated/set in DatBan class
-    GoiMon goiMonFrame = new GoiMon(tableNumber, this.idBill,this.idNV);
+private void openGoiMon(int tableNumber, ObjectId idNV) {
+    GoiMon goiMonFrame = new GoiMon(tableNumber, this.idBill, this.idNV);
     goiMonFrame.setVisible(true);
-    this.dispose(); // or other logic as per your application flow
-}
-    
+    this.dispose(); // hoặc logic khác theo dòng chảy ứng dụng của bạn
+}    
      private void tableButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // Handle table button click event if needed
         // You can add specific actions when a table button is clicked
