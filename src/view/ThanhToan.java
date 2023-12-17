@@ -1,8 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
+import utils.FoodUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import java.util.ArrayList;
 import org.bson.Document;
 import com.mongodb.MongoClient;
@@ -21,6 +22,9 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
+import java.awt.print.PrinterException;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import java.io.InputStream;
 /**
  *
  * @author kevin
@@ -157,35 +161,46 @@ public class ThanhToan extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-            // Calculate the total price
+        try {
+            // Connect to MongoDB database
+            com.mongodb.client.MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+            MongoDatabase database = mongoClient.getDatabase("restaurant");
+            MongoCollection<Document> billCollection = database.getCollection("bill");
+            MongoCollection<Document> tableCollection = database.getCollection("table");
+            Document billDocument = billCollection.find(new Document("idBill", this.idBill)).first();
+            int totalPrice = calculateTotalPrice(database, billDocument);
 
-    try {
-        // Connect to MongoDB database
-        com.mongodb.client.MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
-        MongoDatabase database = mongoClient.getDatabase("restaurant");
-        MongoCollection<Document> collection = database.getCollection("bill");
-        Document billDocument = collection.find(new Document("idBill", this.idBill)).first();
-        int totalPrice = calculateTotalPrice(database, billDocument);
+            // Confirm payment with the user
+            int confirm = JOptionPane.showConfirmDialog(this, "Xác nhận thanh toán tổng cộng: " + totalPrice + " VND?", "Xác Nhận Thanh Toán", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.YES_OPTION) {
+                // Update payment status in the database
+                Document updatedValues = new Document("bill.total_price", totalPrice).append("payment_status", "paid");
+                Document updateOperation = new Document("$set", updatedValues);
+                billCollection.updateOne(Filters.eq("idBill", this.idBill), updateOperation);
 
-        // Create a new Document object with the updated total price and payment status
-        Document updatedValues = new Document();
-        updatedValues.append("bill.total_price", totalPrice);
-        updatedValues.append("payment_status", "paid");
+                // Update table status to "Ban Trong"
+                int tableNumber = billDocument.getInteger("table_number");
+                tableCollection.updateOne(Filters.eq("table_number", tableNumber), new Document("$set", new Document("trangthai", "Ban Trong")));
 
-        // Create a Document object with the update operation
-        Document updateOperation = new Document();
-        updateOperation.append("$set", updatedValues);
+                // Notify user about the payment update
+                JOptionPane.showMessageDialog(this, "Thanh toán thành công và đã cập nhật trong cơ sở dữ liệu.");
 
-        // Update the document in the database
-        collection.updateOne(Filters.eq("idBill", this.idBill), updateOperation);
+                // Ask user if they want to print the bill
+                int print = JOptionPane.showConfirmDialog(this, "Bạn có muốn in hóa đơn không?", "In Hóa Đơn", JOptionPane.YES_NO_OPTION);
+                if (print == JOptionPane.YES_OPTION) {
+                    // Generate and save the bill as a PDF
+                    generatePDFBill(billDocument, totalPrice);
+                }
 
-        // Optionally, update the UI or notify the user
-        JOptionPane.showMessageDialog(this, "Payment confirmed and updated in database.");
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Error updating database: " + e.getMessage());
-    }
-
+                // Close the current window and open the DatBan window
+                this.dispose();
+                DatBan datBanForm = new DatBan();
+                datBanForm.setVisible(true);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -204,6 +219,78 @@ public class ThanhToan extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField2ActionPerformed
 
+private void generatePDFBill(Document billDocument, int totalPrice) {
+        com.mongodb.client.MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+        MongoDatabase database = mongoClient.getDatabase("restaurant");
+        MongoCollection<Document> collection = database.getCollection("bill");
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage();
+            document.addPage(page);
+
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                contentStream.beginText();
+                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
+                contentStream.setLeading(14.5f);
+                contentStream.newLineAtOffset(25, 750);
+
+                // Tên nhà hàng và địa chỉ
+                contentStream.showText("Nha Hang XYZ");
+                contentStream.newLine();
+                contentStream.showText("Dia chi: 123 Duong ABC, TP. HCM");
+                contentStream.newLine();
+                contentStream.newLine();
+
+                // Tiêu đề hóa đơn
+                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 18);
+                contentStream.showText("HOA DON THANH TOAN");
+                contentStream.newLine();
+                contentStream.newLine();
+
+                // Thông tin hóa đơn
+                contentStream.setFont(PDType1Font.HELVETICA, 12);
+                contentStream.showText("Ma hoa don: " + billDocument.getObjectId("idBill").toHexString());
+                contentStream.newLine();
+                contentStream.showText("So ban: " + billDocument.getInteger("table_number"));
+                contentStream.newLine();
+                contentStream.showText("Ngay gio: " + billDocument.get("bill_date"));
+                contentStream.newLine();
+                contentStream.newLine();
+
+                // Tiêu đề cột
+                contentStream.showText("Ten mon       So luong       Don gia       Thanh tien");
+                contentStream.newLine();
+
+                // Dữ liệu các món
+                List<Document> orderList = (List<Document>) billDocument.get("order");
+                for (Document item : orderList) {
+                    String foodName = FoodUtils.getFoodNameFromMongoDB(database, item.getInteger("foodId"));
+                    int quantity = item.getInteger("quantity");
+                    int unitPrice = FoodUtils.getFoodPriceFromMongoDB(database, item.getInteger("foodId"));
+                    int lineTotal = quantity * unitPrice;
+
+                    contentStream.showText(foodName + "       " + quantity + "       " + unitPrice + "       " + lineTotal);
+                    contentStream.newLine();
+                }
+
+                // Tổng cộng
+                contentStream.newLine();
+                contentStream.showText("Tong:       " + orderList.size() + "       " + totalPrice);
+                contentStream.newLine();
+                contentStream.newLine();
+
+                // Lời cảm ơn
+                contentStream.showText("Cam on quy khach da su dung dich vu cua chung toi!");
+                contentStream.endText();
+            }
+
+            document.save("Bill.pdf");
+            JOptionPane.showMessageDialog(this, "Hoa don da duoc luu: Bill.pdf");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Loi khi tao hoa don PDF: " + e.getMessage());
+        }
+    }
+
+    
     private void displayBillInfoInTextField() {
     try {
         com.mongodb.client.MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
@@ -232,8 +319,8 @@ public class ThanhToan extends javax.swing.JFrame {
                 int foodId = item.getInteger("foodId");
                 int quantity = item.getInteger("quantity");
 
-                String foodName = getFoodNameFromMongoDB(database, foodId);
-                int foodPrice = getFoodPriceFromMongoDB(database, foodId);
+                String foodName = FoodUtils.getFoodNameFromMongoDB(database, foodId);
+                int foodPrice = FoodUtils.getFoodPriceFromMongoDB(database, foodId);
                 int totalPrice = foodPrice * quantity;
 
                 // Tạo một chuỗi định dạng cho món ăn
@@ -274,7 +361,7 @@ public class ThanhToan extends javax.swing.JFrame {
                 Integer quantity = order.getInteger("quantity");
 
                 if (foodId != null && quantity != null) {
-                    Integer foodPrice = getFoodPriceFromMongoDB(database, foodId);
+                    int foodPrice = FoodUtils.getFoodPriceFromMongoDB(database, foodId);
                     totalPrice += foodPrice * quantity;
                 } else {
                     // Handle the case where foodId or quantity is null
@@ -286,45 +373,6 @@ public class ThanhToan extends javax.swing.JFrame {
 
         return totalPrice;
     }
-    
-        // Hàm để lấy tên món từ MongoDB dựa trên foodId
-    private static String getFoodNameFromMongoDB(MongoDatabase database, int foodId) {
-        MongoCollection<Document> foodCollection = database.getCollection("food");
-
-        // Thực hiện truy vấn để lấy dữ liệu món ăn
-        Document foodDocument = foodCollection.find(new Document("foodId", foodId)).first();
-
-        // Lấy tên món từ Document
-        if (foodDocument != null) {
-            return foodDocument.getString("foodName");
-        } else {
-            return "Tên món không xác định";
-        }
-    }
-    
-  // Hàm để lấy giá món từ MongoDB dựa trên foodId
-private static Integer getFoodPriceFromMongoDB(MongoDatabase database, int foodId) {
-    MongoCollection<Document> foodCollection = database.getCollection("food");
-
-    // Thực hiện truy vấn để lấy dữ liệu món ăn
-    Document foodDocument = foodCollection.find(new Document("foodId", foodId)).first();
-
-    // Lấy giá món từ Document
-    if (foodDocument != null) {
-        String priceAsString = foodDocument.getString("price");
-
-        // Convert string price to Integer
-        try {
-            return Integer.parseInt(priceAsString);
-        } catch (NumberFormatException e) {
-            // Handle the case where the price is not a valid integer
-            e.printStackTrace(); // Log the exception or handle it according to your needs
-            return 0; // Return a default value or throw an exception as appropriate
-        }
-    } else {
-        return 0; // Giá mặc định khi không tìm thấy giá món
-    }
-}
     
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

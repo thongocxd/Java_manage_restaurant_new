@@ -1,12 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoCollection;
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
 import com.mongodb.client.model.UpdateOptions;
 import javax.swing.SwingUtilities;
 import javax.swing.ImageIcon;
@@ -35,7 +33,7 @@ import view.GoiMon;
  * @param <cmdAdj>
  */
 public class DatBan extends javax.swing.JFrame {
-    
+    public ObjectId idNV;
      
     private ObjectId idBill; // Khai báo idBill ở đây
 
@@ -48,11 +46,18 @@ private Login loginForm;
     /**
      * Creates new form DatBan
      */
-    public DatBan() {
+    public DatBan(ObjectId idNV) {
+        this.idNV = idNV;
         initComponents();
         createTables();
         loginForm = new Login();
-
+    }
+    
+  
+        public DatBan() {
+        initComponents();
+        createTables();
+        loginForm = new Login();
     }
 
     /**
@@ -71,6 +76,7 @@ private Login loginForm;
         lbTitle = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         canvas1 = new java.awt.Canvas();
+        jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -106,7 +112,6 @@ private Login loginForm;
         lbTitle.setFont(new java.awt.Font("Segoe UI", 1, 20)); // NOI18N
         lbTitle.setForeground(new java.awt.Color(108, 91, 123));
         lbTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbTitle.setText("Title");
 
         jPanel1.setBackground(new java.awt.Color(204, 255, 255));
 
@@ -127,23 +132,36 @@ private Login loginForm;
                 .addGap(262, 262, 262))
         );
 
+        jButton4.setText("Quay Lại");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lbTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addContainerGap()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE))
+                                        .addGap(0, 0, Short.MAX_VALUE)))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(jButton4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -160,6 +178,8 @@ private Login loginForm;
                         .addGap(50, 50, 50)
                         .addComponent(lbTitle)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -201,34 +221,75 @@ Login loginform = new Login();
         createTables();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-private void createNewBill(int tableNumber) {
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        Interface interface1 = new Interface(idNV);
+        interface1.setVisible(true);
+        this.dispose();           // TODO add your handling code here:
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void createNewBill(int tableNumber) {
     try {
         MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
         MongoDatabase database = mongoClient.getDatabase("restaurant");
         MongoCollection<Document> billCollection = database.getCollection("bill");
 
-        // Generate a new ObjectId for idBill
-        idBill = new ObjectId(); // Sử dụng biến instance idBill đã khai báo trước đó
+        // Kiểm tra xem có hóa đơn nào chưa thanh toán cho bàn này không
+        Document existingBill = billCollection.find(
+            and(eq("table_number", tableNumber), eq("payment_status", "unpaid"))
+        ).first();
 
-        Document newBill = new Document("table_number", tableNumber)
-                .append("idBill", idBill) // Add idBill field
-                .append("bill", new Document("bill_date", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                        .append("total_price", null))
-                .append("order", Arrays.asList()) // Danh sách món ăn trống
-                .append("payment_status", "unpaid");
-        billCollection.insertOne(newBill);
+        ObjectId idBill;
+        String billId;
 
-        // Lưu trữ ID của hóa đơn mới tạo để sử dụng sau này
-        String billId = newBill.getObjectId("idBill").toString();
-        System.out.println("Searching for idBill: " + idBill); // In ra giá trị của idBill
+        if (existingBill != null) {
+            // Lấy ID của hóa đơn hiện tại
+            idBill = existingBill.getObjectId("idBill");
+            billId = idBill.toString();
+            System.out.println("An unpaid bill already exists for table number: " + tableNumber + ". Bill ID: " + billId);
+            // Có thể thêm logic cập nhật hóa đơn ở đây nếu cần
+        } else {
+            // Tạo hóa đơn mới
+            idBill = new ObjectId();
+            Document newBill = new Document("table_number", tableNumber)
+                    .append("idBill", idBill)
+                    .append("bill", new Document("bill_date", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                            .append("total_price", null))
+                    .append("order", Arrays.asList())
+                    .append("payment_status", "unpaid");
+            billCollection.insertOne(newBill);
 
-        System.out.println("New bill created for table number: " + tableNumber);
+            billId = idBill.toString();
+            System.out.println("New bill created for table number: " + tableNumber + ". Bill ID: " + billId);
+        }
+
+        this.idBill = idBill;
+
     } catch (Exception e) {
         e.printStackTrace();
         JOptionPane.showMessageDialog(null, "Error creating new bill. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
 
+private boolean hasUnpaidBill(int tableNumber) {
+    // Kết nối với cơ sở dữ liệu và kiểm tra hóa đơn
+    // Giả sử bạn có một collection hóa đơn với trường "table_number" và "payment_status"
+    try {
+        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+        MongoDatabase database = mongoClient.getDatabase("restaurant");
+        MongoCollection<Document> billCollection = database.getCollection("bill");
+
+        Document unpaidBill = billCollection.find(
+            and(eq("table_number", tableNumber), eq("payment_status", "unpaid"))
+        ).first();
+
+        return unpaidBill != null;
+    } catch (Exception e) {
+        e.printStackTrace();
+        // Xử lý lỗi
+    }
+    return false;
+}
 
     
 public void createTables() {
@@ -291,15 +352,27 @@ public void createTables() {
                                 // Add "Hủy Bàn" button
                                 JButton cancelButton = new JButton("Hủy Bàn");
                                 cancelButton.addActionListener(cancelEvent -> {
-                                     int result1 = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + tableNumber + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
-                                     updateTableStatus(tableNumber, "Ban Trong");
-                                    actionButton.setText("Đặt Bàn");
-                                     // Remove "Gọi Món" and "Hủy Bàn" buttons
-                                    buttonPanel.removeAll();
-                                    buttonPanel.add(actionButton);
-                                    // Repaint the panel
-                                    tablePanelItem.revalidate();
-                                    tablePanelItem.repaint();
+                                    // Confirm cancellation with a dialog
+                                    int cancelResult = JOptionPane.showConfirmDialog(
+                                        null, 
+                                        "Bạn có chắc chắn muốn hủy bàn số " + tableNumber + " không?", 
+                                        "Xác Nhận Hủy Bàn", 
+                                        JOptionPane.YES_NO_OPTION
+                                    );
+
+                                    // Check if the user confirmed the cancellation
+                                    if (cancelResult == JOptionPane.YES_OPTION) {
+                                        updateTableStatus(tableNumber, "Ban Trong");
+                                        actionButton.setText("Đặt Bàn");
+
+                                        // Remove "Gọi Món" and "Hủy Bàn" buttons
+                                        buttonPanel.removeAll();
+                                        buttonPanel.add(actionButton);
+
+                                        // Repaint the panel
+                                        tablePanelItem.revalidate();
+                                        tablePanelItem.repaint();
+                                    }
                                 });
 
                                 // Add "Gọi Món" button
@@ -308,7 +381,7 @@ public void createTables() {
                                       createNewBill(tableNumber);
                                     // Add code to handle the action when the "Gọi Món" button is clicked
                                     System.out.println("Gọi Món clicked for table number: " + tableNumber);
-                                    GoiMon goiMonFrame = new GoiMon(tableNumber);
+                                    GoiMon goiMonFrame = new GoiMon(tableNumber,idNV);
                                     goiMonFrame.setVisible(true);
                                     dispose();  // Close the current form
                                 });
@@ -330,14 +403,18 @@ public void createTables() {
         createNewBill(tableNumber);
         // Add code to handle the action when the "Gọi Món" button is clicked
         System.out.println("Gọi Món clicked for table number: " + tableNumber);
-        openGoiMon(tableNumber);
+        openGoiMon(tableNumber,idNV);
 
     });
 
     // Add "Hủy Bàn" button
     JButton cancelButton = new JButton("Hủy Bàn");
+    if (!hasUnpaidBill(tableNumber)) {
     cancelButton.addActionListener(cancelEvent -> {
-        // Add code to handle the action when the "Hủy Bàn" button is clicked
+        
+        int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn hủy bàn số " + tableNumber + "?", "Xác Nhận Hủy Bàn", JOptionPane.YES_NO_OPTION);
+        if (confirm == JOptionPane.YES_OPTION) {
+            // Add code to handle the action when the "Hủy Bàn" button is clicked
         updateTableStatus(tableNumber, "Ban Trong");
         actionButton.setText("Đặt Bàn");
 
@@ -373,10 +450,11 @@ public void createTables() {
                 // Add "Gọi Món" button
                 JButton newOrderButton = new JButton("Gọi Món");
                 newOrderButton.addActionListener(newOrderEvent -> {
-                     createNewBill(tableNumber);
+                        createNewBill(tableNumber);
+        //                    int createResult = JOptionPane.showConfirmDialog(null, "Xác nhận gọi món cho bàn số " + tableNumber + "? (Không thể hủy bàn sau khi gọi mon)", "Xác Nhận", JOptionPane.YES_NO_OPTION);
                     // Add code to handle the action when the "Gọi Món" button is clicked
                     System.out.println("Gọi Món clicked for table number: " + tableNumber);
-                    openGoiMon(tableNumber);
+                    openGoiMon(tableNumber,idNV);
                     dispose();  // Close the current form
                 });
 
@@ -398,8 +476,14 @@ public void createTables() {
         // Repaint the panel    
         tablePanelItem.revalidate();
         tablePanelItem.repaint();
-    });
-
+            }
+            });
+            buttonPanel.add(cancelButton);
+        } else {
+            // Có thể hiển thị thông báo hoặc làm mờ nút nếu có hóa đơn chưa thanh toán
+            cancelButton.setEnabled(false);
+            buttonPanel.add(cancelButton);
+        }
     // Add buttons to the buttonPanel
     buttonPanel.setBackground(new Color(216,250,216));
     buttonPanel.add(actionButton);
@@ -462,13 +546,11 @@ public void createTables() {
         }
     }
     
-    public void openGoiMon(int tableNumber) {
-    // Assuming idBill is already generated/set in DatBan class
-    GoiMon goiMonFrame = new GoiMon(tableNumber, this.idBill);
+private void openGoiMon(int tableNumber, ObjectId idNV) {
+    GoiMon goiMonFrame = new GoiMon(tableNumber, this.idBill, this.idNV);
     goiMonFrame.setVisible(true);
-    this.dispose(); // or other logic as per your application flow
-}
-    
+    this.dispose(); // hoặc logic khác theo dòng chảy ứng dụng của bạn
+}    
      private void tableButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // Handle table button click event if needed
         // You can add specific actions when a table button is clicked
@@ -518,6 +600,7 @@ public void createTables() {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lbTitle;

@@ -1,9 +1,11 @@
 
 package view;
+import utils.FoodUtils;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoCollection;
+import static com.mongodb.client.model.Filters.eq;
 import com.mongodb.client.model.UpdateOptions;
 import javax.swing.SwingUtilities;
 import javax.swing.ImageIcon;
@@ -14,6 +16,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import javax.swing.JOptionPane;
 import java.awt.FlowLayout;
 import java.util.List;
@@ -33,12 +36,13 @@ import view.DatBan;
 public class GoiMon extends javax.swing.JFrame {
     private int table_Number;
 //    System.out.println(idBill);
+    public ObjectId idNV;
 
     // Assuming you have a valid ObjectId to pass
     ObjectId someObjectId = new ObjectId(); // Example ObjectId, replace with a valid one
 
     // Create an instance of DatBan with the idBill
-    DatBan datBanInstance = new DatBan();
+    DatBan datBanInstance = new DatBan(idNV);
 
     // Now you can call getIdBill() on this instance
     ObjectId idBill = datBanInstance.getIdBill();
@@ -59,13 +63,23 @@ public class GoiMon extends javax.swing.JFrame {
     public GoiMon() {
     }
     public GoiMon(int table_Number) {
-        this(table_Number, null); // Call the main constructor with null idBill
+        this.table_Number = table_Number;
+        initComponents();
+        createTables();
+        displayTableName();
     }
-    public GoiMon(int table_Number, ObjectId idBill) {
+    public GoiMon(int table_Number, ObjectId idNV) {
+        this.idNV = idNV;
+        this.table_Number = table_Number;
+        initComponents();
+        createTables();
+        displayTableName();
+    }
+    public GoiMon(int table_Number, ObjectId idBill, ObjectId idNV) {
+        this.idNV = idNV;
         this.table_Number = table_Number;
         this.idBill = idBill; // Đảm bảo rằng idBill đã được khởi tạo
         initComponents();
-        displayidBill();
         createTables();
         displayTableName();
         System.out.println(idBill);
@@ -224,16 +238,46 @@ public class GoiMon extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-         this.dispose();  // Close the current form
 
     // Create an instance of DatBan and show it
-    DatBan datBanForm = new DatBan();
+    DatBan datBanForm = new DatBan(idNV);
     datBanForm.setVisible(true);
+    this.dispose();  // Close the current form
+
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:    createTables();
-      
+        // TODO add your handling code here:
+            try {
+        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+        MongoDatabase database = mongoClient.getDatabase("restaurant");
+        MongoCollection<Document> billCollection = database.getCollection("bill");
+
+        Document billDocument = billCollection.find(eq("idBill", idBill)).first();
+        if (billDocument != null) {
+            List<Document> orderedItems = (List<Document>) billDocument.get("order");
+            StringBuilder billInfo = new StringBuilder("Order Details:\n");
+
+            for (Document item : orderedItems) {
+                int foodId = item.getInteger("foodId");
+                int quantity = item.getInteger("quantity");
+
+                String foodName = FoodUtils.getFoodNameFromMongoDB(database, foodId);
+                int foodPrice = FoodUtils.getFoodPriceFromMongoDB(database, foodId);
+                int totalPrice = foodPrice * quantity;
+
+                String formattedLine = String.format("   Món: %-20s x%-10d %6d VND", foodName, quantity, totalPrice);
+                billInfo.append(formattedLine).append("\n");
+            }
+
+            JOptionPane.showMessageDialog(this, billInfo.toString(), "Món Đã Gọi", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy hóa đơn.", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Lỗi khi truy vấn cơ sở dữ liệu.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -268,24 +312,6 @@ public class GoiMon extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Error retrieving table name. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    private void displayidBill() {
-    try {
-        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
-        MongoDatabase database = mongoClient.getDatabase("restaurant");
-        MongoCollection<Document> billCollection = database.getCollection("bill");
-        
-        // Assuming idBill is an ObjectId field
-        Document billDocument = billCollection.find(new Document("idBill", idBill)).first();
-        if (billDocument != null) {
-            jTextField1.setText("ID: " + idBill);
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        jTextField1.setText("lỗi");
-        JOptionPane.showMessageDialog(null, "Error retrieving bill information. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-    }
-}
 //Update hóa đơn
     private void updateOrderInBill(ObjectId idBill, Document foodDocument) {
         try {
@@ -314,21 +340,6 @@ public class GoiMon extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Error updating order in bill. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-//    private Document getBillByidBill(int tableNumber) {
-//    Document billDocument = null;
-//    try {
-//        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
-//        MongoDatabase database = mongoClient.getDatabase("restaurant");
-//        MongoCollection<Document> billCollection = database.getCollection("bill");
-//
-//        // Query the bill based on table number
-//        billDocument = billCollection.find(new Document("idBill", idBill)).first();
-//    } catch (Exception e) {
-//        e.printStackTrace();
-//        JOptionPane.showMessageDialog(null, "Error retrieving bill information. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-//    }
-//    return billDocument;
-//}
 
 public void createTables() {
     SwingUtilities.invokeLater(new Runnable() {
@@ -348,8 +359,9 @@ public void createTables() {
                     String price = document.getString("price");
                     String status = document.getString("status");
                     Integer foodId = document.getInteger("foodId");
+                    String images = document.getString("image");
                     
-
+                    System.out.println(images);
                     // Debugging print
                     System.out.println("Food name: " + foodName + ", Price: " + price);
                      // Display the first foodName in the jTextField1
@@ -369,7 +381,9 @@ public void createTables() {
                     String imagePath = document.getString("imagePath");
                     ImageIcon imageIcon = new ImageIcon(imagePath);
                     JLabel imageLabel = new JLabel(imageIcon);
-                    imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/caiban/images.jpg")));
+                    imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource(images)));
+                    imageLabel.setPreferredSize(new Dimension(300, 300));
+                    imageLabel.setMinimumSize(new Dimension(300, 300));
                     
                     
                     // Create a panel for buttons and add it to the SOUTH position
@@ -539,58 +553,58 @@ JTextField quantityField = new JTextField(2); // 5 là chiều rộng của trư
             quantityField.setText(String.valueOf(currentQuantity - 1));
         }
     });
-JButton addOrder = new JButton("Gọi Món");
+    JButton addOrder = new JButton("Gọi Món");
+        addOrder.addActionListener(orderEvent -> {
+            try {
+                JOptionPane.showMessageDialog(null, "Đã thêm " + Integer.parseInt(quantityField.getText()) + " " + foodName + " vào hóa đơn.", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
+                // Get the quantity from the quantityField
+                int quantity = Integer.parseInt(quantityField.getText());
+                // Create a Document representing the order
+                Document orderDocument = new Document();
+                orderDocument.append("foodId", foodId)
+                              .append("quantity", quantity);
 
-addOrder.addActionListener(orderEvent -> {
-    try {
-        // Get the quantity from the quantityField
-        int quantity = Integer.parseInt(quantityField.getText());
-        // Create a Document representing the order
-        Document orderDocument = new Document();
-        orderDocument.append("foodId", foodId)
-                      .append("quantity", quantity);
+                // Add the order to the current bill (assuming you have the bill ID)
+                System.out.println("okkkkkkkkkkkkkkkkkkkkkkkkkkkkk" + idBill);
+                updateOrderInBill(idBill, orderDocument);
 
-        // Add the order to the current bill (assuming you have the bill ID)
-        System.out.println("okkkkkkkkkkkkkkkkkkkkkkkkkkkkk" + idBill);
-        updateOrderInBill(idBill, orderDocument);
+                // Print a message or perform other actions as needed
+                System.out.println("Added order to the current bill: " + foodName + " - Quantity: " + quantity);
 
-        // Print a message or perform other actions as needed
-        System.out.println("Added order to the current bill: " + foodName + " - Quantity: " + quantity);
+            } catch (NumberFormatException e) {
+                // Handle the case where the quantityField doesn't contain a valid number
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Invalid quantity. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
 
-    } catch (NumberFormatException e) {
-        // Handle the case where the quantityField doesn't contain a valid number
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Invalid quantity. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception e) {
+                // Handle other exceptions
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Error updating order in bill. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        // Create a panel for quantity-related buttons
+        JPanel quantityPanel = new JPanel();
+        quantityPanel.setLayout(new FlowLayout()); // Use FlowLayout to arrange components from left to right
+        quantityPanel.add(decreaseButton);
+        quantityPanel.add(quantityField); // Add quantity field
+        quantityPanel.add(increaseButton);
+        quantityPanel.setBackground(new Color(216,250,216));
 
-    } catch (Exception e) {
-        // Handle other exceptions
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Error updating order in bill. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
-    }
-});
-// Create a panel for quantity-related buttons
-JPanel quantityPanel = new JPanel();
-quantityPanel.setLayout(new FlowLayout()); // Use FlowLayout to arrange components from left to right
-quantityPanel.add(decreaseButton);
-quantityPanel.add(quantityField); // Add quantity field
-quantityPanel.add(increaseButton);
-quantityPanel.setBackground(new Color(216,250,216));
+        // Create a new panel for both "Gọi Món" and quantity-related buttons
+        JPanel buttonPanel1 = new JPanel();
+        buttonPanel1.setLayout(new BorderLayout());
 
-// Create a new panel for both "Gọi Món" and quantity-related buttons
-JPanel buttonPanel1 = new JPanel();
-buttonPanel1.setLayout(new BorderLayout());
+        // Add "Gọi Món" button to the top of the new panel
+        buttonPanel1.add(addOrder, BorderLayout.SOUTH);
 
-// Add "Gọi Món" button to the top of the new panel
-buttonPanel1.add(addOrder, BorderLayout.SOUTH);
+        // Add the quantity-related buttons panel to the center of the new panel
+        buttonPanel1.add(quantityPanel, BorderLayout.CENTER);
 
-// Add the quantity-related buttons panel to the center of the new panel
-buttonPanel1.add(quantityPanel, BorderLayout.CENTER);
-
-// Add components to the tablePanelItem
-tablePanelItem.setLayout(new BorderLayout());
-tablePanelItem.add(status1, BorderLayout.NORTH); // Place status1 at the top
-tablePanelItem.add(imageLabel, BorderLayout.CENTER); // Center the image
-tablePanelItem.add(buttonPanel1, BorderLayout.SOUTH); // Add the panel with buttons at the bottom
+        // Add components to the tablePanelItem
+        tablePanelItem.setLayout(new BorderLayout());
+        tablePanelItem.add(status1, BorderLayout.NORTH); // Place status1 at the top
+        tablePanelItem.add(imageLabel, BorderLayout.CENTER); // Center the image
+        tablePanelItem.add(buttonPanel1, BorderLayout.SOUTH); // Add the panel with buttons at the bottom
                   
                 }
 

@@ -173,8 +173,8 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    DatBan DatBanForm = new DatBan();
+    // TODO add your handling code here:
+    DatBan DatBanForm = new DatBan(idNV);
     DatBanForm.setVisible(true);
     this.dispose(); // Đóng cửa sổ hiện tại (Signup)
 
@@ -228,6 +228,9 @@ Login loginform = new Login();
                 new Interface().setVisible(true);
             }
         });
+        
+        
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
