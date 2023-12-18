@@ -29,11 +29,11 @@ Dự án này là một hệ thống quản lý nhà hàng linh hoạt, được
 
 ### Công Nghệ Sử Dụng
 - Java JDK 19
-- MongoDB (phiên bản mới nhất)
+- MongoDB Atlas Cloud Database
 
 ### Cài Đặt và Chạy Dự Án
 1. Clone dự án từ repository:
-git clone [đường dẫn đến repository]
+git clone https://github.com/thongocxd/Java_manage_restaurant_new.git
 2. Cài đặt MongoDB và chạy MongoDB Server.
 3. Cài đặt Java JDK 19.
 4. Mở dự án bằng IDE tương thích và cài đặt các dependencies.
