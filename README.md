@@ -1,11 +1,45 @@
 # Java_manage_restaurant_mongodb
 
-Hệ thống quản lý nhà hàng 
-Lời cảm ơn
-Lời đầu tiên, nhóm xin gửi lời cảm ơn trân trọng đến https://github.com/NHViet03/Java_Project_RestaurantMS đã tận tình giúp đỡ để hiểu rõ mô hình của dự án
+Hệ Thống Quản Lý Nhà Hàng
+Lời Cảm Ơn
+Lời đầu tiên, nhóm xin gửi lời cảm ơn trân trọng đến NHViet03 đã tận tình giúp đỡ, cung cấp nguồn thông tin quý giá giúp chúng tôi hiểu rõ mô hình và cách thức hoạt động của dự án này.
 
-Giới thiệu đồ án
-Nhà hàng là một phần không thể thiếu trong đời sống con người hiện đại, đó là nơi mà mọi người đến để thưởng thức những món ăn ngon, gặp gỡ bạn bè, hẹn hò cặp đôi, tổ chức các buổi tiệc tùng và sự kiện, và thư giãn sau khoảng thời gian kiếm tiền mệt nhọc. Hầu hết khách hàng đi đến nhà hàng để mong muốn tận hưởng được các món ăn ngon, không gian thoải mái cũng như sự phục vụ nhiệt tình và dịch vụ tốt nhất. Để đáp ứng được các vấn đề đó đòi hỏi những nhà hàng cần trang bị cho mình những hệ thống quản lí thích hợp và hiện đại nhất. Hệ thống quản lý nhà hàng trở thành một yếu tố quan trọng giúp các nhà hàng cạnh tranh và phát triển. Nhận biết được sự cấp thiết đó, nhóm chúng em đã vận dụng những kiến thức đã học cùng với sự hiểu biết của mình để cùng nhau xây dựng và phát triển phần mềm hệ thống “Quản lý nhà hàng”, chủ yếu tập trung vào việc lưu trữ; quản lý nhân sự, khách hàng; quản lý doanh thu; cho phép khách hàng tự gọi món tại bàn và phát triển giao diện dễ tương tác với người dùng, khách hàng.
+Giới Thiệu Đồ Án
+Trong thời đại hiện đại, nhà hàng không chỉ là nơi thưởng thức ẩm thực mà còn là không gian lý tưởng cho các buổi họp mặt, hẹn hò, và tổ chức sự kiện. Để đáp ứng nhu cầu ngày càng cao của khách hàng, việc sở hữu một hệ thống quản lý nhà hàng hiệu quả và tiên tiến là điều cần thiết. Chính vì vậy, nhóm chúng tôi đã quyết định phát triển "Hệ Thống Quản Lý Nhà Hàng" - một giải pháp công nghệ toàn diện, hướng tới việc tối ưu hóa quá trình quản lý nhân sự, khách hàng, doanh thu, và nâng cao trải nghiệm của khách hàng khi sử dụng dịch vụ.
 
-Mục tiêu của đề tài
-Xây dựng hệ thống Quản lý Nhà Hàng một cách chuyên nghiệp, linh hoạt, có thể quản lý và lưu trữ được một lượng dữ liệu lớn. Hệ thống giúp người dùng dễ dàng hơn trong việc tổ chức, quản lý dữ liệu Khách hàng, quản lý Đặt bàn, quản lý Thực đơn,… và nhiều hơn thế nữa.
+Mục Tiêu của Đề Tài
+Hệ thống này được thiết kế với mục tiêu xây dựng một giải pháp quản lý nhà hàng chuyên nghiệp và linh hoạt, có khả năng xử lý và lưu trữ lượng dữ liệu lớn. Hệ thống hỗ trợ người dùng trong việc tổ chức và quản lý dữ liệu khách hàng, quản lý đặt bàn, thực đơn, và nhiều chức năng khác, giúp tối ưu hóa quy trình làm việc và tăng cường hiệu suất hoạt động của nhà hàng.
+
+Mô Tả Dự Án
+Dự án này là một hệ thống quản lý nhà hàng linh hoạt, được xây dựng bằng Java và sử dụng MongoDB phiên bản mới nhất. Hệ thống này cung cấp các chức năng quản lý nhà hàng toàn diện cho cả nhân viên, quản lý và quản lý kho.
+
+Tính Năng Chính
+Dành cho Nhân Viên
+Đặt bàn
+Gọi món
+Xem món đã gọi
+Thanh toán và in hóa đơn
+Dành cho Quản Lý
+Quản lý nhân viên
+Quản lý món ăn (thêm, sửa, xóa, sắp xếp, tìm kiếm)
+Quản lý hóa đơn
+Quản Lý Kho
+Quản lý nguyên liệu
+Công Nghệ Sử Dụng
+Java JDK 19
+MongoDB (phiên bản mới nhất)
+Cài Đặt và Chạy Dự Án
+Clone dự án từ repository:
+bash
+Copy code
+git clone [đường dẫn đến repository]
+Cài đặt MongoDB và chạy MongoDB Server.
+Cài đặt Java JDK 19.
+Mở dự án bằng IDE tương thích và cài đặt các dependencies.
+Chạy ứng dụng từ trang login.
+Các Tính Năng Mở Rộng
+Giao diện chức năng cho khách hàng.
+Hỗ trợ nhiều nền tảng: điện thoại, máy tính bảng.
+Giao diện đa ngôn ngữ.
+Báo cáo doanh thu và đề xuất món ăn bằng AI.
+Thanh toán điện tử.
