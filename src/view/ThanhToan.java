@@ -25,6 +25,7 @@ import com.mongodb.client.model.UpdateOptions;
 import java.awt.print.PrinterException;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import java.io.InputStream;
+import java.text.Normalizer;
 /**
  *
  * @author kevin
@@ -219,78 +220,87 @@ public class ThanhToan extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField2ActionPerformed
 
-private void generatePDFBill(Document billDocument, int totalPrice) {
-        com.mongodb.client.MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
-        MongoDatabase database = mongoClient.getDatabase("restaurant");
-        MongoCollection<Document> collection = database.getCollection("bill");
-        try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage();
-            document.addPage(page);
+    private void generatePDFBill(Document billDocument, int totalPrice) {
+        // Connect to MongoDB database
+    com.mongodb.client.MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+    MongoDatabase database = mongoClient.getDatabase("restaurant");
+    MongoCollection<Document> billCollection = database.getCollection("bill");
+    try (PDDocument document = new PDDocument()) {
+        PDPage page = new PDPage();
+        document.addPage(page);
 
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                contentStream.beginText();
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 14);
-                contentStream.setLeading(14.5f);
-                contentStream.newLineAtOffset(25, 750);
+        try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+            contentStream.beginText();
+            contentStream.setFont(PDType1Font.COURIER_BOLD, 14);
+            contentStream.setLeading(14.5f);
+            contentStream.newLineAtOffset(25, 750);
 
-                // Tên nhà hàng và địa chỉ
-                contentStream.showText("Nha Hang XYZ");
-                contentStream.newLine();
-                contentStream.showText("Dia chi: 123 Duong ABC, TP. HCM");
-                contentStream.newLine();
-                contentStream.newLine();
+            // Restaurant Name and Address
+            contentStream.showText("Nha Hang XYZ");
+            contentStream.newLine();
+            contentStream.showText("Dia chi: 123 Duong ABC, TP. HCM");
+            contentStream.newLine();
+            contentStream.newLine();
 
-                // Tiêu đề hóa đơn
-                contentStream.setFont(PDType1Font.HELVETICA_BOLD, 18);
-                contentStream.showText("HOA DON THANH TOAN");
-                contentStream.newLine();
-                contentStream.newLine();
+            // Bill Title
+            contentStream.setFont(PDType1Font.COURIER_BOLD, 18);
+            contentStream.showText("HOA DON THANH TOAN");
+            contentStream.newLine();
+            contentStream.newLine();
 
-                // Thông tin hóa đơn
-                contentStream.setFont(PDType1Font.HELVETICA, 12);
-                contentStream.showText("Ma hoa don: " + billDocument.getObjectId("idBill").toHexString());
-                contentStream.newLine();
-                contentStream.showText("So ban: " + billDocument.getInteger("table_number"));
-                contentStream.newLine();
-                contentStream.showText("Ngay gio: " + billDocument.get("bill_date"));
-                contentStream.newLine();
-                contentStream.newLine();
+            // Bill Information
+            contentStream.setFont(PDType1Font.COURIER, 12);
+            contentStream.showText("Ma hoa don: " + billDocument.getObjectId("idBill").toHexString());
+            contentStream.newLine();
+            contentStream.showText("So ban: " + billDocument.getInteger("table_number"));
+            contentStream.newLine();
+            Document billSubDocument = (Document) billDocument.get("bill");
+            String billDate = billSubDocument.getString("bill_date");
+            contentStream.showText("Ngay gio: " + billDate);
+            contentStream.newLine();
+            contentStream.newLine();
 
-                // Tiêu đề cột
-                contentStream.showText("Ten mon       So luong       Don gia       Thanh tien");
-                contentStream.newLine();
+            // Column Titles
+            contentStream.showText(String.format("%-20s %-10s %-10s %-10s", "Ten mon", "So luong", "Don gia", "Thanh tien"));
+            contentStream.newLine();
 
-                // Dữ liệu các món
-                List<Document> orderList = (List<Document>) billDocument.get("order");
-                for (Document item : orderList) {
-                    String foodName = FoodUtils.getFoodNameFromMongoDB(database, item.getInteger("foodId"));
-                    int quantity = item.getInteger("quantity");
-                    int unitPrice = FoodUtils.getFoodPriceFromMongoDB(database, item.getInteger("foodId"));
-                    int lineTotal = quantity * unitPrice;
+            // Order Items
+            List<Document> orderList = (List<Document>) billDocument.get("order");
+            for (Document item : orderList) {
+                String foodName = FoodUtils.getFoodNameFromMongoDB(database, item.getInteger("foodId"));
+                foodName = removeDiacritics(foodName);
+                int quantity = item.getInteger("quantity");
+                int unitPrice = FoodUtils.getFoodPriceFromMongoDB(database, item.getInteger("foodId"));
+                int lineTotal = quantity * unitPrice;
 
-                    contentStream.showText(foodName + "       " + quantity + "       " + unitPrice + "       " + lineTotal);
-                    contentStream.newLine();
-                }
-
-                // Tổng cộng
+                contentStream.showText(String.format("%-20s %-10d %-10d %-10d", foodName, quantity, unitPrice, lineTotal));
                 contentStream.newLine();
-                contentStream.showText("Tong:       " + orderList.size() + "       " + totalPrice);
-                contentStream.newLine();
-                contentStream.newLine();
-
-                // Lời cảm ơn
-                contentStream.showText("Cam on quy khach da su dung dich vu cua chung toi!");
-                contentStream.endText();
             }
 
-            document.save("Bill.pdf");
-            JOptionPane.showMessageDialog(this, "Hoa don da duoc luu: Bill.pdf");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Loi khi tao hoa don PDF: " + e.getMessage());
+            // Total
+            contentStream.newLine();
+            contentStream.showText(String.format("%-20s %-10s %-10s %-10d", "Tong:", "", "", totalPrice));
+            contentStream.newLine();
+            contentStream.newLine();
+
+            // Thank You Note
+            contentStream.showText("Cam on quy khach da su dung dich vu cua chung toi!");
+            contentStream.endText();
         }
+
+        document.save("Bill.pdf");
+        JOptionPane.showMessageDialog(this, "Hoa don da duoc luu: Bill.pdf");
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Loi khi tao hoa don PDF: " + e.getMessage());
     }
+}
 
     
+    public static String removeDiacritics(String input) {
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        return normalized.replaceAll("\\p{M}", "");
+    }
+
     private void displayBillInfoInTextField() {
     try {
         com.mongodb.client.MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
