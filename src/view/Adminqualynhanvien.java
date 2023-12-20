@@ -181,6 +181,7 @@ public class Adminqualynhanvien extends javax.swing.JFrame {
             }
         ));
         jTable1.setToolTipText("");
+        jTable1.setSelectionBackground(new java.awt.Color(0, 0, 0));
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);

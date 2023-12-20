@@ -21,7 +21,16 @@ import java.awt.GridLayout;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 import java.awt.FlowLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Collections;
+import java.util.List;
+import javax.swing.RowSorter;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 /**
@@ -31,6 +40,7 @@ import org.bson.types.ObjectId;
 public class Adminqualyhoadon extends javax.swing.JFrame {
     private Dieuchinhhoadon dieuchinhhoadon;
      private String billID;
+     private boolean ascendingOrder = false;    
     
 
     /**
@@ -40,6 +50,17 @@ public class Adminqualyhoadon extends javax.swing.JFrame {
         initComponents();
         populateTableWithBillData();
          this.billID = billID;
+         // Add mouse listener for sorting by date when clicking on the "Ngày" column header
+        jTable1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int column = jTable1.columnAtPoint(e.getPoint());
+                if (column == 2) { // Column index of "Ngày"
+                    // Perform sorting based on the "Ngày" column
+                    sortByDate();
+                }
+            }
+        });
     }
 
     /**
@@ -59,9 +80,11 @@ public class Adminqualyhoadon extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
         jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jTable1.setBackground(new java.awt.Color(204, 255, 255));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -80,6 +103,8 @@ public class Adminqualyhoadon extends javax.swing.JFrame {
         jTable1.setSelectionBackground(new java.awt.Color(241, 241, 241));
         jScrollPane1.setViewportView(jTable1);
 
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 0, 860, 544));
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -90,6 +115,8 @@ public class Adminqualyhoadon extends javax.swing.JFrame {
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 29, Short.MAX_VALUE)
         );
+
+        getContentPane().add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(157, 342, 837, -1));
 
         jPanel2.setBackground(new java.awt.Color(204, 255, 255));
 
@@ -161,47 +188,37 @@ public class Adminqualyhoadon extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jButton4.setFont(new java.awt.Font("Times New Roman", 3, 12)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(255, 51, 153));
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+
+        jPanel1.setBackground(new java.awt.Color(204, 255, 255));
+
+        jButton4.setBackground(new java.awt.Color(204, 255, 204));
         jButton4.setText("Điều chỉnh hóa đơn");
+        jButton4.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 140, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 860, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(195, 195, 195)
-                .addComponent(jButton4)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(18, 18, 18)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addContainerGap()))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 544, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(732, Short.MAX_VALUE)
+                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(342, 342, 342)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(229, Short.MAX_VALUE))
-                .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(50, Short.MAX_VALUE)
+                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 500, 860, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -252,20 +269,17 @@ private void populateTableWithBillData() {
     MongoDatabase database = mongoClient.getDatabase("restaurant");
     MongoCollection<Document> collection = database.getCollection("bill");
 
-    // Lấy tất cả các dòng dữ liệu từ collection và sắp xếp theo ngày giờ giảm dần
     Bson sort = Sorts.descending("bill.bill_date");
     try (MongoCursor<Document> cursor = collection.find().sort(sort).iterator()) {
         String[] columnNames = {"ID", "Số Bàn", "Ngày", "Tổng Tiền", "Tình Trạng"};
 
-        // Set up the table model with editable cells
         DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return true; // Allow editing of all cells
+                return true;
             }
         };
 
-        // Lặp qua kết quả và thêm dữ liệu vào model
         while (cursor.hasNext()) {
             Document document = cursor.next();
             String id = document.getObjectId("_id").toString();
@@ -278,10 +292,13 @@ private void populateTableWithBillData() {
             model.addRow(new Object[]{id, tableNumber, billDate, totalPrice, paymentStatus});
         }
 
-        // Đặt model cho JTable
+        // Set the default sorting order for the "Ngày" column
+        RowSorter<? extends TableModel> sorter = new TableRowSorter<>(model);
+        jTable1.setRowSorter(sorter);
+        sorter.setSortKeys(Collections.singletonList(new SortKey(2, SortOrder.DESCENDING)));
+
         jTable1.setModel(model);
     } finally {
-        // Đóng kết nối MongoDB
         mongoClient.close();
     }
 }
@@ -289,9 +306,22 @@ void refreshTableData() {
     // Call the method to populate the table with updated data
     populateTableWithBillData();
 }
-    /**
-     * @param args the command line arguments
-     */
+    private void sortByDate() {
+    RowSorter<? extends TableModel> sorter = jTable1.getRowSorter();
+
+    if (sorter != null) {
+        List<? extends SortKey> sortKeys = sorter.getSortKeys();
+
+        // Toggle the sorting order
+        ascendingOrder = !ascendingOrder;
+
+        // Determine the sort order based on the boolean value
+        SortOrder sortOrder = ascendingOrder ? SortOrder.ASCENDING : SortOrder.DESCENDING;
+
+        // Set the sort keys with the updated order for the "Ngày" column
+        sorter.setSortKeys(Collections.singletonList(new SortKey(2, sortOrder)));
+    }
+}
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -331,6 +361,7 @@ void refreshTableData() {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
