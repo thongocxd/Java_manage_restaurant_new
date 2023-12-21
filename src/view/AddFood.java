@@ -1,8 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
+
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -20,13 +17,14 @@ import java.awt.Color;
 import javax.swing.JOptionPane;
 import java.awt.FlowLayout;
 import view.Adminqualymonan;
+
 /**
  *
  * @author PC
  */
 public class AddFood extends javax.swing.JFrame {
 
-        private Adminqualymonan adminForm;
+    private Adminqualymonan adminForm;
 
     /**
      * Creates new form AddFood
@@ -117,25 +115,25 @@ public class AddFood extends javax.swing.JFrame {
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(12, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3))
-                .addContainerGap())
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jButton1)
+                                        .addComponent(jButton2)
+                                        .addComponent(jButton3))
+                                .addContainerGap())
         );
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 180, 280, 40));
@@ -157,48 +155,48 @@ public class AddFood extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-         this.dispose();
+        this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         // Collect data from text fields
-    String foodName = jTextField1.getText();
-    String price = jTextField2.getText();
-    String status = jTextField3.getText();
+        String foodName = jTextField1.getText();
+        String price = jTextField2.getText();
+        String status = jTextField3.getText();
 
-    // Validate inputs (optional, but recommended)
-    if (foodName.isEmpty() || price.isEmpty() || status.isEmpty()) {
-        // Show an error message or handle invalid inputs
-        return;
-    }
+        // Validate inputs (optional, but recommended)
+        if (foodName.isEmpty() || price.isEmpty() || status.isEmpty()) {
+            // Show an error message or handle invalid inputs
+            return;
+        }
 
-    // Create a MongoDB client
-    MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
+        // Create a MongoDB client
+        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
 
-    // Select the database and collection
-    MongoDatabase database = mongoClient.getDatabase("restaurant");
-    MongoCollection<Document> collection = database.getCollection("food");
+        // Select the database and collection
+        MongoDatabase database = mongoClient.getDatabase("restaurant");
+        MongoCollection<Document> collection = database.getCollection("food");
 
-    // Create a document for the new food item
-    Document newFood = new Document("foodName", foodName)
-                            .append("price", price)
-                            .append("status", status);
+        // Create a document for the new food item
+        Document newFood = new Document("foodName", foodName)
+                .append("price", price)
+                .append("status", status);
 
-    // Insert the new document into the collection
-    collection.insertOne(newFood);
+        // Insert the new document into the collection
+        collection.insertOne(newFood);
 
-    // Close the MongoDB client
-    mongoClient.close();
+        // Close the MongoDB client
+        mongoClient.close();
 
-    // Optionally, clear the input fields or give a success message
-    jTextField1.setText("");
-    jTextField2.setText("");
-    jTextField3.setText("");
-    // Show a success message or update the interface as needed
-    if (this.adminForm != null) {
-        this.adminForm.refreshFoodTable();
-    }
+        // Optionally, clear the input fields or give a success message
+        jTextField1.setText("");
+        jTextField2.setText("");
+        jTextField3.setText("");
+        // Show a success message or update the interface as needed
+        if (this.adminForm != null) {
+            this.adminForm.refreshFoodTable();
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -242,7 +240,6 @@ public class AddFood extends javax.swing.JFrame {
             }
         });
     }
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

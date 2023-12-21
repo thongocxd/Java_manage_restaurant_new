@@ -1,8 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
+
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -22,6 +19,7 @@ import javax.swing.JOptionPane;
 import java.awt.FlowLayout;
 import javax.swing.table.DefaultTableModel;
 import org.bson.types.ObjectId;
+
 /**
  *
  * @author kevin
@@ -239,10 +237,10 @@ public class Adminqualynhanvien extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-            // Mở cửa sổ quản lý món ăn khi nút "Quản Lý Món Ăn" được bấm
-    Adminqualymonan adminQuanLyMonAn = new Adminqualymonan();
-    adminQuanLyMonAn.setVisible(true);
-    this.dispose(); // Đóng cửa sổ hiện tại (Admin)        // TODO add your handling code here:
+        // Mở cửa sổ quản lý món ăn khi nút "Quản Lý Món Ăn" được bấm
+        Adminqualymonan adminQuanLyMonAn = new Adminqualymonan();
+        adminQuanLyMonAn.setVisible(true);
+        this.dispose(); // Đóng cửa sổ hiện tại (Admin)        // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -250,7 +248,7 @@ public class Adminqualynhanvien extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-Login loginform = new Login();
+        Login loginform = new Login();
         loginform.setVisible(true);
         this.dispose();           // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -263,29 +261,29 @@ Login loginform = new Login();
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
-         System.out.println("Button clicked"); // Dòng để debug
+        System.out.println("Button clicked"); // Dòng để debug
 
-    int selectedRow = jTable1.getSelectedRow();
-    if (selectedRow >= 0) {
-        String id = jTable1.getValueAt(selectedRow, 0).toString();
-        String tenNhanVien = jTable1.getValueAt(selectedRow, 1).toString();
-        String email = jTable1.getValueAt(selectedRow, 2).toString();
-        String tenTaiKhoan = jTable1.getValueAt(selectedRow, 3).toString();
-        String matKhau = jTable1.getValueAt(selectedRow, 4).toString();
-        String chucVu = jTable1.getValueAt(selectedRow, 5).toString();
-        String luong = jTable1.getValueAt(selectedRow, 6).toString();
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow >= 0) {
+            String id = jTable1.getValueAt(selectedRow, 0).toString();
+            String tenNhanVien = jTable1.getValueAt(selectedRow, 1).toString();
+            String email = jTable1.getValueAt(selectedRow, 2).toString();
+            String tenTaiKhoan = jTable1.getValueAt(selectedRow, 3).toString();
+            String matKhau = jTable1.getValueAt(selectedRow, 4).toString();
+            String chucVu = jTable1.getValueAt(selectedRow, 5).toString();
+            String luong = jTable1.getValueAt(selectedRow, 6).toString();
 
-        System.out.println("Retrieved from table: " + tenNhanVien + ", " + email + ", " + tenTaiKhoan + ", " + matKhau + ", " + chucVu + ", " + luong); // Dòng để debug
+            System.out.println("Retrieved from table: " + tenNhanVien + ", " + email + ", " + tenTaiKhoan + ", " + matKhau + ", " + chucVu + ", " + luong); // Dòng để debug
 
-        updateEmployeeInDatabase(id, tenNhanVien, email, tenTaiKhoan, matKhau, chucVu, luong);
-    } else {
-        // Xử lý trường hợp không có hàng nào được chọn
-    }
+            updateEmployeeInDatabase(id, tenNhanVien, email, tenTaiKhoan, matKhau, chucVu, luong);
+        } else {
+            // Xử lý trường hợp không có hàng nào được chọn
+        }
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-    AddNV addNVWindow = new AddNV();
-    addNVWindow.setVisible(true);        // TODO add your handling code here:
+        AddNV addNVWindow = new AddNV();
+        addNVWindow.setVisible(true);        // TODO add your handling code here:
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
@@ -303,7 +301,6 @@ Login loginform = new Login();
         }        // TODO add your handling code here:
     }//GEN-LAST:event_jButton8ActionPerformed
 
-    
     private void populateTableWithFoodData() {
         MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
         MongoDatabase database = mongoClient.getDatabase("restaurant");
@@ -334,51 +331,48 @@ Login loginform = new Login();
                     document.get("Luong")
                 });
             }
-            
-            
 
             // Đặt model cho JTable
             jTable1.setModel(model);
-            jTable1.setBackground(new Color(204,255,255));
-            
-            
-            
+            jTable1.setBackground(new Color(204, 255, 255));
+
         } finally {
             // Đóng kết nối MongoDB
             mongoClient.close();
         }
-       
+
     }
-    
+
     private void updateEmployeeInDatabase(String id, String tenNhanVien, String email, String tenTaiKhoan, String matKhau, String chucVu, String luong) {
-    MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
-    MongoDatabase database = mongoClient.getDatabase("restaurant");
-    MongoCollection<Document> collection = database.getCollection("users");
-
-    Document filter = new Document("_id", new ObjectId(id));
-    Document updatedDocument = new Document("$set", new Document("Ten", tenNhanVien)
-        .append("Email", email)
-        .append("username", tenTaiKhoan)
-        .append("Matkhau", matKhau)
-        .append("VaiTro", chucVu)
-        .append("Luong", luong));
-
-    collection.updateOne(filter, updatedDocument);
-    mongoClient.close();
-    System.out.println("Updating: " + id + ", " + tenNhanVien + ", " + email + ", " + tenTaiKhoan + ", " + matKhau + ", " + chucVu + ", " + luong); // Dòng để debug
-}
-    
-    private void deleteFoodFromDatabase(String id) {
-    try (MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test")) {
+        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
         MongoDatabase database = mongoClient.getDatabase("restaurant");
         MongoCollection<Document> collection = database.getCollection("users");
-        
+
         Document filter = new Document("_id", new ObjectId(id));
-        collection.deleteOne(filter);
-    } catch (Exception e) {
-        e.printStackTrace(); // For debugging purposes
+        Document updatedDocument = new Document("$set", new Document("Ten", tenNhanVien)
+                .append("Email", email)
+                .append("username", tenTaiKhoan)
+                .append("Matkhau", matKhau)
+                .append("VaiTro", chucVu)
+                .append("Luong", luong));
+
+        collection.updateOne(filter, updatedDocument);
+        mongoClient.close();
+        System.out.println("Updating: " + id + ", " + tenNhanVien + ", " + email + ", " + tenTaiKhoan + ", " + matKhau + ", " + chucVu + ", " + luong); // Dòng để debug
     }
-}
+
+    private void deleteFoodFromDatabase(String id) {
+        try (MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test")) {
+            MongoDatabase database = mongoClient.getDatabase("restaurant");
+            MongoCollection<Document> collection = database.getCollection("users");
+
+            Document filter = new Document("_id", new ObjectId(id));
+            collection.deleteOne(filter);
+        } catch (Exception e) {
+            e.printStackTrace(); // For debugging purposes
+        }
+    }
+
     /**
      * @param args the command line arguments
      */

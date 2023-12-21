@@ -1,8 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
+
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -23,6 +20,7 @@ import java.awt.FlowLayout;
 import javax.swing.table.DefaultTableModel;
 import org.bson.types.ObjectId;
 import view.Adminqualyhoadon;
+
 /**
  *
  * @author kevin
@@ -255,11 +253,11 @@ public class Adminqualymonan extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-    Adminqualynhanvien adminquanlinhanvien = new Adminqualynhanvien();
+        Adminqualynhanvien adminquanlinhanvien = new Adminqualynhanvien();
         adminquanlinhanvien.setVisible(true);
         this.dispose();         // TODO add your handling code here:        // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -273,7 +271,7 @@ public class Adminqualymonan extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-    Adminqualyhoadon adminquanlyhoadon = new Adminqualyhoadon();
+        Adminqualyhoadon adminquanlyhoadon = new Adminqualyhoadon();
         adminquanlyhoadon.setVisible(true);
         this.dispose();           // TODO add your handling code here:
     }//GEN-LAST:event_jButton5ActionPerformed
@@ -284,72 +282,71 @@ public class Adminqualymonan extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-    System.out.println("Button clicked"); // Simple debugging line
+        System.out.println("Button clicked"); // Simple debugging line
 
         int selectedRow = jTable1.getSelectedRow();
-    if (selectedRow >= 0) {
-        String id = jTable1.getValueAt(selectedRow, 0).toString();
-        String tenMon = jTable1.getValueAt(selectedRow, 1).toString();
-        String dongGia = jTable1.getValueAt(selectedRow, 2).toString();
-        String trangThai = jTable1.getValueAt(selectedRow, 3).toString();
+        if (selectedRow >= 0) {
+            String id = jTable1.getValueAt(selectedRow, 0).toString();
+            String tenMon = jTable1.getValueAt(selectedRow, 1).toString();
+            String dongGia = jTable1.getValueAt(selectedRow, 2).toString();
+            String trangThai = jTable1.getValueAt(selectedRow, 3).toString();
 
-        System.out.println("Retrieved from table: " + tenMon + ", " + dongGia + ", " + trangThai); // Debugging line
+            System.out.println("Retrieved from table: " + tenMon + ", " + dongGia + ", " + trangThai); // Debugging line
 
-        updateFoodInDatabase(id, tenMon, dongGia, trangThai);
-    } else {
-        // Handle case where no row is selected
-    }
-    
+            updateFoodInDatabase(id, tenMon, dongGia, trangThai);
+        } else {
+            // Handle case where no row is selected
+        }
+
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
         int selectedRow = jTable1.getSelectedRow();
-    if (selectedRow >= 0) {
-        String id = jTable1.getValueAt(selectedRow, 0).toString();
-        
-        // Delete from the database
-        deleteFoodFromDatabase(id);
+        if (selectedRow >= 0) {
+            String id = jTable1.getValueAt(selectedRow, 0).toString();
 
-        // Remove from the table model to update UI
-        ((DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
-    } else {
-        JOptionPane.showMessageDialog(this, "Please select a row to delete.");
-    }
+            // Delete from the database
+            deleteFoodFromDatabase(id);
+
+            // Remove from the table model to update UI
+            ((DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a row to delete.");
+        }
     }//GEN-LAST:event_jButton8ActionPerformed
 
-    
     private void populateTableWithFoodData() {
-     MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
-    MongoDatabase database = mongoClient.getDatabase("restaurant");
-    MongoCollection<Document> collection = database.getCollection("food");
+        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
+        MongoDatabase database = mongoClient.getDatabase("restaurant");
+        MongoCollection<Document> collection = database.getCollection("food");
 
-    try (MongoCursor<Document> cursor = collection.find().iterator()) {
-        String[] columnNames = {"ID_MonAn", "TenMon", "Donggia", "TrangThai"};
+        try (MongoCursor<Document> cursor = collection.find().iterator()) {
+            String[] columnNames = {"ID_MonAn", "TenMon", "Donggia", "TrangThai"};
 
-        // Set up the table model with editable cells
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return true; // Allow editing of all cells
+            // Set up the table model with editable cells
+            DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return true; // Allow editing of all cells
+                }
+            };
+
+            while (cursor.hasNext()) {
+                Document doc = cursor.next();
+                String id = doc.getObjectId("_id").toString();
+                String tenMon = doc.getString("foodName");
+                String dongGia = doc.getString("price");
+                String trangThai = doc.getString("status");
+                model.addRow(new Object[]{id, tenMon, dongGia, trangThai});
             }
-        };
 
-        while (cursor.hasNext()) {
-            Document doc = cursor.next();
-            String id = doc.getObjectId("_id").toString();
-            String tenMon = doc.getString("foodName");
-            String dongGia = doc.getString("price");
-            String trangThai = doc.getString("status");
-            model.addRow(new Object[]{id, tenMon, dongGia, trangThai});
+            jTable1.setModel(model);
+        } finally {
+            mongoClient.close();
         }
-
-        jTable1.setModel(model);
-    } finally {
-        mongoClient.close();
     }
-}
-    
+
     private void updateFoodInDatabase(String id, String tenMon, String dongGia, String trangThai) {
         MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
         MongoDatabase database = mongoClient.getDatabase("restaurant");
@@ -357,34 +354,30 @@ public class Adminqualymonan extends javax.swing.JFrame {
 
         Document filter = new Document("_id", new ObjectId(id));
         Document updatedDocument = new Document("$set", new Document("foodName", tenMon)
-            .append("price", dongGia)
-            .append("status", trangThai));
+                .append("price", dongGia)
+                .append("status", trangThai));
 
         collection.updateOne(filter, updatedDocument);
         mongoClient.close();
-            System.out.println("Updating: " + id + ", " + tenMon + ", " + dongGia + ", " + trangThai); // Debugging line
+        System.out.println("Updating: " + id + ", " + tenMon + ", " + dongGia + ", " + trangThai); // Debugging line
 
     }
-    
+
     private void deleteFoodFromDatabase(String id) {
-    try (MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test")) {
-        MongoDatabase database = mongoClient.getDatabase("restaurant");
-        MongoCollection<Document> collection = database.getCollection("food");
-        
-        Document filter = new Document("_id", new ObjectId(id));
-        collection.deleteOne(filter);
-    } catch (Exception e) {
-        e.printStackTrace(); // For debugging purposes
+        try (MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test")) {
+            MongoDatabase database = mongoClient.getDatabase("restaurant");
+            MongoCollection<Document> collection = database.getCollection("food");
+
+            Document filter = new Document("_id", new ObjectId(id));
+            collection.deleteOne(filter);
+        } catch (Exception e) {
+            e.printStackTrace(); // For debugging purposes
+        }
     }
-}
-    
+
     public void refreshFoodTable() {
-    populateTableWithFoodData();
-}
-
-
-    
-    
+        populateTableWithFoodData();
+    }
 
     /**
      * @param args the command line arguments

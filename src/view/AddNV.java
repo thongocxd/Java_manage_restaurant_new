@@ -1,8 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
+
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -19,6 +16,7 @@ import java.awt.GridLayout;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 import java.awt.FlowLayout;
+
 /**
  *
  * @author PC
@@ -165,57 +163,57 @@ public class AddNV extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-           String username = jTextField1.getText();
-    String password = jTextField2.getText(); // Assuming this is the password field
-    String ten = jTextField3.getText(); // Assuming this is the 'Ten' field
-    String email = jTextField4.getText(); // Assuming this is the 'Email' field
-    String luong = jTextField5.getText(); // Assuming this is the 'Luong' field
-    int role = jComboBox2.getSelectedIndex() + 1; // Assuming this matches the role
-    String vaiTro = jComboBox1.getSelectedItem().toString();
+        String username = jTextField1.getText();
+        String password = jTextField2.getText(); // Assuming this is the password field
+        String ten = jTextField3.getText(); // Assuming this is the 'Ten' field
+        String email = jTextField4.getText(); // Assuming this is the 'Email' field
+        String luong = jTextField5.getText(); // Assuming this is the 'Luong' field
+        int role = jComboBox2.getSelectedIndex() + 1; // Assuming this matches the role
+        String vaiTro = jComboBox1.getSelectedItem().toString();
 
-    // Validate inputs (optional, but recommended)
-    if (username.isEmpty() || password.isEmpty() || ten.isEmpty() || email.isEmpty() || luong.isEmpty()) {
-        // Show an error message or handle invalid inputs
-        return;
-    }
+        // Validate inputs (optional, but recommended)
+        if (username.isEmpty() || password.isEmpty() || ten.isEmpty() || email.isEmpty() || luong.isEmpty()) {
+            // Show an error message or handle invalid inputs
+            return;
+        }
 
-    // Connect to MongoDB
-    MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
-    MongoDatabase database = mongoClient.getDatabase("restaurant");
-    MongoCollection<Document> collection = database.getCollection("users");
+        // Connect to MongoDB
+        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
+        MongoDatabase database = mongoClient.getDatabase("restaurant");
+        MongoCollection<Document> collection = database.getCollection("users");
 
-    // Create a document for the new employee
-    Document newEmployee = new Document("username", username)
-        .append("password", password)
-        .append("Ten", ten)
-        .append("role", role)
-        .append("Email", email)
-        .append("Matkhau", password)
-        .append("VaiTro", vaiTro)
-        .append("Luong", luong);
+        // Create a document for the new employee
+        Document newEmployee = new Document("username", username)
+                .append("password", password)
+                .append("Ten", ten)
+                .append("role", role)
+                .append("Email", email)
+                .append("Matkhau", password)
+                .append("VaiTro", vaiTro)
+                .append("Luong", luong);
 
-    // Insert the new document into the collection
-    collection.insertOne(newEmployee);
+        // Insert the new document into the collection
+        collection.insertOne(newEmployee);
 
-    // Close the MongoDB client
-    mongoClient.close();
+        // Close the MongoDB client
+        mongoClient.close();
 
-    // Optionally, clear the input fields or give a success message
-    // Reset fields or inform the user of success
+        // Optionally, clear the input fields or give a success message
+        // Reset fields or inform the user of success
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-         // Clear the text fields
-    jTextField1.setText(""); // Clears the Username field
-    jTextField2.setText(""); // Clears the Password field
-    jTextField3.setText(""); // Clears the 'Ten' field
-    jTextField4.setText(""); // Clears the Email field
-    jTextField5.setText(""); // Clears the Luong field
+        // Clear the text fields
+        jTextField1.setText(""); // Clears the Username field
+        jTextField2.setText(""); // Clears the Password field
+        jTextField3.setText(""); // Clears the 'Ten' field
+        jTextField4.setText(""); // Clears the Email field
+        jTextField5.setText(""); // Clears the Luong field
 
-    // Reset the combo boxes to their default state if needed
-    // For example, if you want to reset them to the first item
-    jComboBox1.setSelectedIndex(0); // Resets the first combo box
-    jComboBox2.setSelectedIndex(0); 
+        // Reset the combo boxes to their default state if needed
+        // For example, if you want to reset them to the first item
+        jComboBox1.setSelectedIndex(0); // Resets the first combo box
+        jComboBox2.setSelectedIndex(0);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed

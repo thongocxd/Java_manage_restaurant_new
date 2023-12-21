@@ -1,4 +1,5 @@
 package view;
+
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -6,22 +7,16 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoClients;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 import view.Signup;
-/**
- *
- * @author kevin
- */
+
 public class Login extends javax.swing.JFrame {
 
     public ObjectId idNV;
-    
-    public ObjectId getIdNV(){
+
+    public ObjectId getIdNV() {
         return idNV;
     }
+
     /**
      * Creates new form Login
      */
@@ -155,57 +150,56 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-      // Existing code to get username and password
-    String username = jTextField1.getText();
-    char[] passwordChars = jPasswordField1.getPassword();
-    String password = new String(passwordChars);
+        // Existing code to get username and password
+        String username = jTextField1.getText();
+        char[] passwordChars = jPasswordField1.getPassword();
+        String password = new String(passwordChars);
 
-    // Connect to MongoDB
-    MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
+        // Connect to MongoDB
+        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
 
-    // Select the database
-    MongoDatabase database = mongoClient.getDatabase("restaurant");
+        // Select the database
+        MongoDatabase database = mongoClient.getDatabase("restaurant");
 
-    // Query the database to check login credentials
-    MongoCollection<Document> collection = database.getCollection("users");
-    Document query = new Document("username", username)
-            .append("password", password);
-    MongoCursor<Document> cursor = collection.find(query).iterator();
+        // Query the database to check login credentials
+        MongoCollection<Document> collection = database.getCollection("users");
+        Document query = new Document("username", username)
+                .append("password", password);
+        MongoCursor<Document> cursor = collection.find(query).iterator();
 
-    if (cursor.hasNext()) {
-        Document userDoc = cursor.next();
-        ObjectId idNV = userDoc.getObjectId("_id");
-        int role = userDoc.getInteger("role");
+        if (cursor.hasNext()) {
+            Document userDoc = cursor.next();
+            ObjectId idNV = userDoc.getObjectId("_id");
+            int role = userDoc.getInteger("role");
 
-        // Check user role and open the corresponding interface
-        if (role == 2) {
-            Admin adminForm = new Admin();
-            adminForm.setVisible(true);
-        } else if (role == 1) {
-            Interface interfaceForm = new Interface(idNV);
-            interfaceForm.setVisible(true);
+            // Check user role and open the corresponding interface
+            if (role == 2) {
+                Admin adminForm = new Admin();
+                adminForm.setVisible(true);
+            } else if (role == 1) {
+                Interface interfaceForm = new Interface(idNV);
+                interfaceForm.setVisible(true);
+            } else if (role == 3) {
+                QLyKho QLyKhoForm = new QLyKho();
+                QLyKhoForm.setVisible(true);
+            }
+            this.dispose(); // Close the current window (Login)
+        } else {
+            // Login failed
+            jLabel5.setText("Tên đăng nhập hoặc mật khẩu không đúng");
+            jPasswordField1.setText(""); // Clear the password field
         }
-        else if(role==3){
-            QLyKho QLyKhoForm = new QLyKho();
-            QLyKhoForm.setVisible(true);
-        }
-        this.dispose(); // Close the current window (Login)
-    } else {
-        // Login failed
-        jLabel5.setText("Tên đăng nhập hoặc mật khẩu không đúng");
-        jPasswordField1.setText(""); // Clear the password field
-    }
 
-    // Close MongoDB connection
-    mongoClient.close();
+        // Close MongoDB connection
+        mongoClient.close();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-    // TODO add your handling code here:
-    // Code để chuyển từ trang Signup sang trang Login
-    Signup SignupForm = new Signup();
-    SignupForm.setVisible(true);
-    this.dispose(); // Đóng cửa sổ hiện tại (Signup)
+        // TODO add your handling code here:
+        // Code để chuyển từ trang Signup sang trang Login
+        Signup SignupForm = new Signup();
+        SignupForm.setVisible(true);
+        this.dispose(); // Đóng cửa sổ hiện tại (Signup)
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jPasswordField1AncestorAdded(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_jPasswordField1AncestorAdded

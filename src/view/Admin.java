@@ -1,9 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
+
 import view.Adminqualynhanvien;
+
 /**
  *
  * @author kevin
@@ -137,14 +135,14 @@ public class Admin extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-            // Mở cửa sổ quản lý món ăn khi nút "Quản Lý Món Ăn" được bấm
-    Adminqualymonan adminQuanLyMonAn = new Adminqualymonan();
-    adminQuanLyMonAn.setVisible(true);
-    this.dispose(); // Đóng cửa sổ hiện tại (Admin)
+        // Mở cửa sổ quản lý món ăn khi nút "Quản Lý Món Ăn" được bấm
+        Adminqualymonan adminQuanLyMonAn = new Adminqualymonan();
+        adminQuanLyMonAn.setVisible(true);
+        this.dispose(); // Đóng cửa sổ hiện tại (Admin)
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-    Adminqualynhanvien adminquanlinhanvien = new Adminqualynhanvien();
+        Adminqualynhanvien adminquanlinhanvien = new Adminqualynhanvien();
         adminquanlinhanvien.setVisible(true);
         this.dispose();         // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -159,7 +157,7 @@ public class Admin extends javax.swing.JFrame {
         // TODO add your handling code here:
         Adminqualyhoadon quanlyhoadonform = new Adminqualyhoadon();
         quanlyhoadonform.setVisible(true);
-        this.dispose(); 
+        this.dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     /**

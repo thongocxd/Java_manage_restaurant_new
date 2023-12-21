@@ -1,4 +1,5 @@
 package view;
+
 import utils.FoodUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -22,30 +23,33 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
+import java.awt.Window;
 import java.awt.print.PrinterException;
+import java.io.File;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import java.io.InputStream;
 import java.text.Normalizer;
+
 /**
  *
  * @author kevin
  */
 public class ThanhToan extends javax.swing.JFrame {
+
+    List<JFrame> openWindows = new ArrayList<>();
     private javax.swing.JTextField jTextField1;
     private javax.swing.JPanel tablePanel;
     private int table_Number;
-    
+
     // Assuming you have a valid ObjectId to pass
     ObjectId someObjectId = new ObjectId(); // Example ObjectId, replace with a valid one
 
     // Create an instance of DatBan with the idBill
-    
     DatBan datBanInstance = new DatBan();
-    
-    public ObjectId getIdBill(){
-    return idBill;
+
+    public ObjectId getIdBill() {
+        return idBill;
     }
-    
 
     // Now you can call getIdBill() on this instance
     ObjectId idBill = datBanInstance.getIdBill();
@@ -55,9 +59,10 @@ public class ThanhToan extends javax.swing.JFrame {
      */
     public ThanhToan() {
         initComponents();
-          // Kết nối tới cơ sở dữ liệu MongoDB và lấy dữ liệu từ collection "bill"
+        // Kết nối tới cơ sở dữ liệu MongoDB và lấy dữ liệu từ collection "bill"
         displayBillInfoInTextField();
     }
+
     public ThanhToan(int table_Number, ObjectId idBill) {
         this.table_Number = table_Number;
         this.idBill = idBill; // Đảm bảo rằng idBill đã được khởi tạo
@@ -174,7 +179,7 @@ public class ThanhToan extends javax.swing.JFrame {
                 tableCollection.updateOne(Filters.eq("table_number", tableNumber), new Document("$set", new Document("trangthai", "Ban Trong")));
 
                 // Notify user about the payment update
-                JOptionPane.showMessageDialog(this, "Thanh toán thành công và đã cập nhật trong cơ sở dữ liệu.");
+                JOptionPane.showMessageDialog(this, "Thanh toán thành công");
 
                 // Ask user if they want to print the bill
                 int print = JOptionPane.showConfirmDialog(this, "Bạn có muốn in hóa đơn không?", "In Hóa Đơn", JOptionPane.YES_NO_OPTION);
@@ -185,6 +190,11 @@ public class ThanhToan extends javax.swing.JFrame {
 
                 // Close the current window and open the DatBan window
                 this.dispose();
+                for (Window window : Window.getWindows()) {
+                    if (window instanceof JFrame) {
+                        window.dispose();
+                    }
+                }
                 DatBan datBanForm = new DatBan();
                 datBanForm.setVisible(true);
             }
@@ -196,14 +206,14 @@ public class ThanhToan extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-            // Close the current ThanhToan form
-    this.dispose();
+        // Close the current ThanhToan form
+        this.dispose();
 
-    // Create an instance of the DatBan form
-    GoiMon goiMonForm = new GoiMon();
+        // Create an instance of the DatBan form
+        GoiMon goiMonForm = new GoiMon();
 
-    // Make the DatBan form visible
-    goiMonForm.setVisible(true);
+        // Make the DatBan form visible
+        goiMonForm.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
@@ -212,145 +222,159 @@ public class ThanhToan extends javax.swing.JFrame {
 
     private void generatePDFBill(Document billDocument, int totalPrice) {
         // Connect to MongoDB database
-    com.mongodb.client.MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
-    MongoDatabase database = mongoClient.getDatabase("restaurant");
-    MongoCollection<Document> billCollection = database.getCollection("bill");
-    try (PDDocument document = new PDDocument()) {
-        PDPage page = new PDPage();
-        document.addPage(page);
+        com.mongodb.client.MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+        MongoDatabase database = mongoClient.getDatabase("restaurant");
+        MongoCollection<Document> billCollection = database.getCollection("bill");
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage();
+            document.addPage(page);
 
-        try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-            contentStream.beginText();
-            contentStream.setFont(PDType1Font.COURIER_BOLD, 14);
-            contentStream.setLeading(14.5f);
-            contentStream.newLineAtOffset(25, 750);
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                contentStream.beginText();
+                contentStream.setFont(PDType1Font.COURIER_BOLD, 14);
+                contentStream.setLeading(14.5f);
+                contentStream.newLineAtOffset(25, 750);
 
-            // Restaurant Name and Address
-            contentStream.showText("Nha Hang PKNQ");
-            contentStream.newLine();
-            contentStream.showText("Dia chi: 273 An Duong Vuong, Phuong 3, Quan 5, TP. HCM");
-            contentStream.newLine();
-            contentStream.newLine();
-
-            // Bill Title
-            contentStream.setFont(PDType1Font.COURIER_BOLD, 18);
-            contentStream.showText("HOA DON THANH TOAN");
-            contentStream.newLine();
-            contentStream.newLine();
-
-            // Bill Information
-            contentStream.setFont(PDType1Font.COURIER, 12);
-            contentStream.showText("Ma hoa don: " + billDocument.getObjectId("idBill").toHexString());
-            contentStream.newLine();
-            contentStream.showText("So ban: " + billDocument.getInteger("table_number"));
-            contentStream.newLine();
-            Document billSubDocument = (Document) billDocument.get("bill");
-            String billDate = billSubDocument.getString("bill_date");
-            contentStream.showText("Ngay gio: " + billDate);
-            contentStream.newLine();
-            contentStream.newLine();
-
-            // Column Titles
-            contentStream.showText(String.format("%-20s %-10s %-10s %-10s", "Ten mon", "So luong", "Don gia", "Thanh tien"));
-            contentStream.newLine();
-
-            // Order Items
-            List<Document> orderList = (List<Document>) billDocument.get("order");
-            for (Document item : orderList) {
-                String foodName = FoodUtils.getFoodNameFromMongoDB(database, item.getInteger("foodId"));
-                foodName = removeDiacritics(foodName);
-                int quantity = item.getInteger("quantity");
-                int unitPrice = FoodUtils.getFoodPriceFromMongoDB(database, item.getInteger("foodId"));
-                int lineTotal = quantity * unitPrice;
-
-                contentStream.showText(String.format("%-20s %-10d %-10d %-10d", foodName, quantity, unitPrice, lineTotal));
+                // Restaurant Name and Address
+                contentStream.showText("Nha Hang PKNQ");
                 contentStream.newLine();
+                contentStream.showText("Dia chi: 273 An Duong Vuong, Phuong 3, Quan 5, TP. HCM");
+                contentStream.newLine();
+                contentStream.newLine();
+
+                // Bill Title
+                contentStream.setFont(PDType1Font.COURIER_BOLD, 18);
+                contentStream.showText("HOA DON THANH TOAN");
+                contentStream.newLine();
+                contentStream.newLine();
+
+                // Bill Information
+                contentStream.setFont(PDType1Font.COURIER, 12);
+                contentStream.showText("Ma hoa don: " + billDocument.getObjectId("idBill").toHexString());
+                contentStream.newLine();
+                contentStream.showText("So ban: " + billDocument.getInteger("table_number"));
+                contentStream.newLine();
+                Document billSubDocument = (Document) billDocument.get("bill");
+                String billDate = billSubDocument.getString("bill_date");
+                contentStream.showText("Ngay gio: " + billDate);
+                contentStream.newLine();
+                contentStream.newLine();
+
+                // Column Titles
+                contentStream.showText(String.format("%-20s %-10s %-10s %-10s", "Ten mon", "So luong", "Don gia", "Thanh tien"));
+                contentStream.newLine();
+
+                // Order Items
+                List<Document> orderList = (List<Document>) billDocument.get("order");
+                for (Document item : orderList) {
+                    String foodName = FoodUtils.getFoodNameFromMongoDB(database, item.getInteger("foodId"));
+                    foodName = removeDiacritics(foodName);
+                    int quantity = item.getInteger("quantity");
+                    int unitPrice = FoodUtils.getFoodPriceFromMongoDB(database, item.getInteger("foodId"));
+                    int lineTotal = quantity * unitPrice;
+
+                    contentStream.showText(String.format("%-20s %-10d %-10d %-10d", foodName, quantity, unitPrice, lineTotal));
+                    contentStream.newLine();
+                }
+
+                // Total
+                int totalQuantity = 0;
+                for (Document item : orderList) {
+                    int quantity = item.getInteger("quantity");
+                    totalQuantity += quantity;
+                }
+                contentStream.newLine();
+                contentStream.showText(String.format("%-20s %-10s %-10s %-10d", "Tong:", totalQuantity, "", totalPrice));
+                contentStream.newLine();
+                contentStream.newLine();
+
+                // Thank You Note
+                contentStream.setFont(PDType1Font.COURIER_BOLD_OBLIQUE, 12);
+                contentStream.showText("Cam on quy khach da su dung dich vu cua chung toi!");
+                contentStream.endText();
             }
 
-            // Total
-            contentStream.newLine();
-            contentStream.showText(String.format("%-20s %-10s %-10s %-10d", "Tong:", "", "", totalPrice));
-            contentStream.newLine();
-            contentStream.newLine();
+            // Format file name with idBill and date, and save in a specific directory
+            String billId = billDocument.getObjectId("idBill").toHexString();
+            String billDate = ((Document) billDocument.get("bill")).getString("bill_date").replace(":", "-").replace(" ", "_");
+            String fileName = "Bills/Bill_" + billId + "_" + billDate + ".pdf";
 
-            // Thank You Note
-            contentStream.showText("Cam on quy khach da su dung dich vu cua chung toi!");
-            contentStream.endText();
+            // Ensure directory exists
+            File directory = new File("Bills");
+            if (!directory.exists()) {
+                directory.mkdir();
+            }
+
+            document.save(fileName);
+            JOptionPane.showMessageDialog(this, "Hoa don da duoc luu: " + fileName);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Loi khi tao hoa don PDF: " + e.getMessage());
         }
-
-        document.save("Bill.pdf");
-        JOptionPane.showMessageDialog(this, "Hoa don da duoc luu: Bill.pdf");
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Loi khi tao hoa don PDF: " + e.getMessage());
     }
-}
 
-    
     public static String removeDiacritics(String input) {
         String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
         return normalized.replaceAll("\\p{M}", "");
     }
 
     private void displayBillInfoInTextField() {
-    try {
-        com.mongodb.client.MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
-        MongoDatabase database = mongoClient.getDatabase("restaurant");
-        MongoCollection<Document> collection = database.getCollection("bill");
+        try {
+            com.mongodb.client.MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+            MongoDatabase database = mongoClient.getDatabase("restaurant");
+            MongoCollection<Document> collection = database.getCollection("bill");
 
-        Document billDocument = collection.find(new Document("idBill", this.idBill)).first();
+            Document billDocument = collection.find(new Document("idBill", this.idBill)).first();
 
-        if (billDocument != null) {
-            StringBuilder billInfo = new StringBuilder();
-            StringBuilder billTotal = new StringBuilder();
+            if (billDocument != null) {
+                StringBuilder billInfo = new StringBuilder();
+                StringBuilder billTotal = new StringBuilder();
 
-            // Extracting and formatting each field
-            Document bill = (Document) billDocument.get("bill");
-            List<Document> order = (List<Document>) billDocument.get("order");
-            
-            billInfo.append("Bill ID: ").append(billDocument.getObjectId("idBill").toHexString()).append("\n");
-            billInfo.append("Table Number: ").append(billDocument.getInteger("table_number")).append("\n");
-            billInfo.append("Bill Date: ").append(bill.get("bill_date")).append("\n");
-            billInfo.append("Order Details:\n");
-            
-            
-            int maxWidth = 278; // Độ dài tối đa cho mỗi dòng
+                // Extracting and formatting each field
+                Document bill = (Document) billDocument.get("bill");
+                List<Document> order = (List<Document>) billDocument.get("order");
 
-            for (Document item : order) {
-                int foodId = item.getInteger("foodId");
-                int quantity = item.getInteger("quantity");
+                billInfo.append("Bill ID: ").append(billDocument.getObjectId("idBill").toHexString()).append("\n");
+                billInfo.append("Table Number: ").append(billDocument.getInteger("table_number")).append("\n");
+                billInfo.append("Bill Date: ").append(bill.get("bill_date")).append("\n");
+                billInfo.append("Order Details:\n");
 
-                String foodName = FoodUtils.getFoodNameFromMongoDB(database, foodId);
-                int foodPrice = FoodUtils.getFoodPriceFromMongoDB(database, foodId);
-                int totalPrice = foodPrice * quantity;
+                int maxWidth = 278; // Độ dài tối đa cho mỗi dòng
 
-                // Tạo một chuỗi định dạng cho món ăn
-                String formattedLine = String.format("   Món: %-20s x%-10d %6d VND", foodName, quantity, totalPrice);
+                for (Document item : order) {
+                    int foodId = item.getInteger("foodId");
+                    int quantity = item.getInteger("quantity");
 
-                // Cắt chuỗi nếu quá dài
-                if (formattedLine.length() > maxWidth) {
-                    formattedLine = formattedLine.substring(0, maxWidth);
+                    String foodName = FoodUtils.getFoodNameFromMongoDB(database, foodId);
+                    int foodPrice = FoodUtils.getFoodPriceFromMongoDB(database, foodId);
+                    int totalPrice = foodPrice * quantity;
+
+                    // Tạo một chuỗi định dạng cho món ăn
+                    String formattedLine = String.format("   Món: %-20s x%-10d %6d VND", foodName, quantity, totalPrice);
+
+                    // Cắt chuỗi nếu quá dài
+                    if (formattedLine.length() > maxWidth) {
+                        formattedLine = formattedLine.substring(0, maxWidth);
+                    }
+
+                    // Thêm vào thông tin hóa đơn
+                    billInfo.append(formattedLine).append("\n");
+
                 }
+                billTotal.append(" ").append(calculateTotalPrice(database, billDocument)).append(" VND");
 
-                // Thêm vào thông tin hóa đơn
-                billInfo.append(formattedLine).append("\n");
-                
+                // Setting the text to jTextField
+                jTextArea1.setText(billInfo.toString());
+                jTextField2.setText(billTotal.toString());
+            } else {
+                jTextArea1.setText("Bill not found");
             }
-            billTotal.append(" ").append(calculateTotalPrice(database,billDocument)).append(" VND");                
-
-            
-            // Setting the text to jTextField
-            jTextArea1.setText(billInfo.toString());
-            jTextField2.setText(billTotal.toString());
-        } else {
-            jTextArea1.setText("Bill not found");
+        } catch (Exception e) {
+            e.printStackTrace();
+            jTextArea1.setText("Error connecting to MongoDB: " + e.getMessage());
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-        jTextArea1.setText("Error connecting to MongoDB: " + e.getMessage());
     }
-}   
-    
-       // You need to implement this method to calculate the total price based on the ordered items
+
+    // You need to implement this method to calculate the total price based on the ordered items
     private int calculateTotalPrice(MongoDatabase database, Document billDocument) {
         int totalPrice = 0;
 
@@ -373,11 +397,11 @@ public class ThanhToan extends javax.swing.JFrame {
 
         return totalPrice;
     }
-    
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
 
-        /* Create and display the form */
+ /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new ThanhToan().setVisible(true);

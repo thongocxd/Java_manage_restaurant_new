@@ -1,8 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
+
 import org.bson.types.ObjectId;
 import view.DatBan;
 
@@ -11,22 +8,23 @@ import view.DatBan;
  * @author kevin
  */
 public class Interface extends javax.swing.JFrame {
+
     private Login loginForm;
     public ObjectId idNV;
-    
-    public ObjectId getIdNV(){
+
+    public ObjectId getIdNV() {
         return idNV;
     }
+
     /**
      * Creates new form Interface
      */
-    
     public Interface() {
         initComponents();
         jPanel4.setVisible(false);
         loginForm = new Login();
     }
-    
+
     public Interface(ObjectId idNV) {
         this.idNV = idNV;
         initComponents();
@@ -173,28 +171,27 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-    // TODO add your handling code here:
-    DatBan DatBanForm = new DatBan(idNV);
-    DatBanForm.setVisible(true);
-    this.dispose(); // Đóng cửa sổ hiện tại (Signup)
+        // TODO add your handling code here:
+        DatBan DatBanForm = new DatBan(idNV);
+        DatBanForm.setVisible(true);
+        this.dispose(); // Đóng cửa sổ hiện tại (Signup)
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-Login loginform = new Login();
+        Login loginform = new Login();
         loginform.setVisible(true);
         this.dispose();           // TODO add your handling code here:
-         loginForm.setVisible(true);
-    this.dispose();  // Close the current form
+        loginForm.setVisible(true);
+        this.dispose();  // Close the current form
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-            ThongTinNhanVien thongtinnhanvien = new ThongTinNhanVien(idNV);
-            thongtinnhanvien.setVisible(true);
-            this.dispose();        // TODO add your handling code here:
+        ThongTinNhanVien thongtinnhanvien = new ThongTinNhanVien(idNV);
+        thongtinnhanvien.setVisible(true);
+        this.dispose();        // TODO add your handling code here:
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    
     /**
      * @param args the command line arguments
      */
@@ -228,9 +225,7 @@ Login loginform = new Login();
                 new Interface().setVisible(true);
             }
         });
-        
-        
-        
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

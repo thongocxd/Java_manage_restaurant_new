@@ -1,14 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
+
 import view.Login;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import javax.swing.JOptionPane;
 import org.bson.Document;
+
 /**
  *
  * @author kevin
@@ -18,7 +16,6 @@ public class Signup extends javax.swing.JFrame {
     private MongoClient mongoClient;
     private MongoDatabase database;
 
-    
     public Signup() {
         initComponents();
         mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
@@ -134,50 +131,50 @@ public class Signup extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-         // Lấy thông tin từ form
-    String username = jTextField1.getText();
-    char[] passwordChars1 = jPasswordField1.getPassword();
-    char[] passwordChars2 = jPasswordField2.getPassword();
+        // Lấy thông tin từ form
+        String username = jTextField1.getText();
+        char[] passwordChars1 = jPasswordField1.getPassword();
+        char[] passwordChars2 = jPasswordField2.getPassword();
 
-    // Chuyển đổi mảng ký tự thành chuỗi
-    String password1 = new String(passwordChars1);
-    String password2 = new String(passwordChars2);
+        // Chuyển đổi mảng ký tự thành chuỗi
+        String password1 = new String(passwordChars1);
+        String password2 = new String(passwordChars2);
 
-    // Kiểm tra xem mật khẩu 1 và mật khẩu 2 có giống nhau không
-    if (!password1.equals(password2)) {
-        // Hiển thị thông báo hoặc thực hiện xử lý khi mật khẩu không khớp
-        JOptionPane.showMessageDialog(this, "Mật khẩu không khớp. Vui lòng nhập lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        // Xoá trường mật khẩu
-        jPasswordField1.setText("");
-        jPasswordField2.setText("");
-        return; // Dừng lại và không thực hiện thêm vào database
-    }
+        // Kiểm tra xem mật khẩu 1 và mật khẩu 2 có giống nhau không
+        if (!password1.equals(password2)) {
+            // Hiển thị thông báo hoặc thực hiện xử lý khi mật khẩu không khớp
+            JOptionPane.showMessageDialog(this, "Mật khẩu không khớp. Vui lòng nhập lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            // Xoá trường mật khẩu
+            jPasswordField1.setText("");
+            jPasswordField2.setText("");
+            return; // Dừng lại và không thực hiện thêm vào database
+        }
 
-    // Tiếp tục thêm vào database...
-    // Tạo một document để thêm vào collection
-    Document userDocument = new Document("username", username)
-            .append("password", password1)
-            .append("role", 1);
+        // Tiếp tục thêm vào database...
+        // Tạo một document để thêm vào collection
+        Document userDocument = new Document("username", username)
+                .append("password", password1)
+                .append("role", 1);
 
-    // Thêm document vào collection (collection có thể tạo trước trong MongoDB)
-    database.getCollection("users").insertOne(userDocument);
+        // Thêm document vào collection (collection có thể tạo trước trong MongoDB)
+        database.getCollection("users").insertOne(userDocument);
 
-    // Đóng kết nối MongoDB
-    mongoClient.close();
-    
-    // Hiển thị thông báo hoặc thực hiện xử lý khi đăng ký thành công
-    JOptionPane.showMessageDialog(this, "Đăng ký thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-    
-    // Đóng cửa sổ hiện tại (Signup)
+        // Đóng kết nối MongoDB
+        mongoClient.close();
+
+        // Hiển thị thông báo hoặc thực hiện xử lý khi đăng ký thành công
+        JOptionPane.showMessageDialog(this, "Đăng ký thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+
+        // Đóng cửa sổ hiện tại (Signup)
 //    this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-         // TODO add your handling code here:
-    // Code để chuyển từ trang Signup sang trang Login
-    Login loginForm = new Login();
-    loginForm.setVisible(true);
-    this.dispose(); // Đóng cửa sổ hiện tại (Signup)
+        // TODO add your handling code here:
+        // Code để chuyển từ trang Signup sang trang Login
+        Login loginForm = new Login();
+        loginForm.setVisible(true);
+        this.dispose(); // Đóng cửa sổ hiện tại (Signup)
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordField1ActionPerformed

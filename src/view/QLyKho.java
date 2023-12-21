@@ -1,8 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
+
 import view.Adminqualynhanvien;
 
 /**
@@ -10,6 +7,7 @@ import view.Adminqualynhanvien;
  * @author kevin
  */
 public class QLyKho extends javax.swing.JFrame {
+
     private ThongTinNhanVien thongTinNhanVienForm;
     private Login loginForm;
 
@@ -18,8 +16,8 @@ public class QLyKho extends javax.swing.JFrame {
      */
     public QLyKho() {
         initComponents();
-         thongTinNhanVienForm = new ThongTinNhanVien();
-         loginForm = new Login();
+        thongTinNhanVienForm = new ThongTinNhanVien();
+        loginForm = new Login();
     }
 
     /**
@@ -117,12 +115,12 @@ public class QLyKho extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         QLyNguyenLieu FormQLyNguyenLieu = new QLyNguyenLieu();
-    FormQLyNguyenLieu.setVisible(true);
-    this.dispose(); // Đóng cửa sổ hiện tại (QLyKho)
+        FormQLyNguyenLieu.setVisible(true);
+        this.dispose(); // Đóng cửa sổ hiện tại (QLyKho)
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-      loginForm.setVisible(true);
+        loginForm.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**

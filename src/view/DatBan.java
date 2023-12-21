@@ -1,4 +1,5 @@
 package view;
+
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -23,7 +24,6 @@ import java.util.Arrays;
 import org.bson.types.ObjectId;
 import view.GoiMon;
 
-
 /**
  *
  * @author kevin
@@ -33,16 +33,18 @@ import view.GoiMon;
  * @param <cmdAdj>
  */
 public class DatBan extends javax.swing.JFrame {
+
     public ObjectId idNV;
-     
+
     private ObjectId idBill; // Khai báo idBill ở đây
 
-    public ObjectId getIdBill(){
+    public ObjectId getIdBill() {
         return idBill;
     }
     // Add this line to declare the tablePanel variable
-private javax.swing.JPanel tablePanel;
-private Login loginForm;
+    private javax.swing.JPanel tablePanel;
+    private Login loginForm;
+
     /**
      * Creates new form DatBan
      */
@@ -52,9 +54,8 @@ private Login loginForm;
         createTables();
         loginForm = new Login();
     }
-    
-  
-        public DatBan() {
+
+    public DatBan() {
         initComponents();
         createTables();
         loginForm = new Login();
@@ -198,17 +199,17 @@ private Login loginForm;
     }//GEN-LAST:event_cmdAdjActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-Login loginform = new Login();
+        Login loginform = new Login();
         loginform.setVisible(true);
         this.dispose();           // TODO add your handling code here:
-         loginForm.setVisible(true);
-    this.dispose();  // Close the current form
+        loginForm.setVisible(true);
+        this.dispose();  // Close the current form
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:    createTables();
-       createTables();
-    
+        createTables();
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -224,296 +225,285 @@ Login loginform = new Login();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void createNewBill(int tableNumber) {
-    try {
-        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
-        MongoDatabase database = mongoClient.getDatabase("restaurant");
-        MongoCollection<Document> billCollection = database.getCollection("bill");
+        try {
+            MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+            MongoDatabase database = mongoClient.getDatabase("restaurant");
+            MongoCollection<Document> billCollection = database.getCollection("bill");
 
-        // Kiểm tra xem có hóa đơn nào chưa thanh toán cho bàn này không
-        Document existingBill = billCollection.find(
-            and(eq("table_number", tableNumber), eq("payment_status", "unpaid"))
-        ).first();
+            // Kiểm tra xem có hóa đơn nào chưa thanh toán cho bàn này không
+            Document existingBill = billCollection.find(
+                    and(eq("table_number", tableNumber), eq("payment_status", "unpaid"))
+            ).first();
 
-        ObjectId idBill;
-        String billId;
+            ObjectId idBill;
+            String billId;
 
-        if (existingBill != null) {
-            // Lấy ID của hóa đơn hiện tại
-            idBill = existingBill.getObjectId("idBill");
-            billId = idBill.toString();
-            System.out.println("An unpaid bill already exists for table number: " + tableNumber + ". Bill ID: " + billId);
-            // Có thể thêm logic cập nhật hóa đơn ở đây nếu cần
-        } else {
-            // Tạo hóa đơn mới
-            idBill = new ObjectId();
-            Document newBill = new Document("table_number", tableNumber)
-                    .append("idBill", idBill)
-                    .append("bill", new Document("bill_date", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                            .append("total_price", null))
-                    .append("order", Arrays.asList())
-                    .append("payment_status", "unpaid");
-            billCollection.insertOne(newBill);
+            if (existingBill != null) {
+                // Lấy ID của hóa đơn hiện tại
+                idBill = existingBill.getObjectId("idBill");
+                billId = idBill.toString();
+                System.out.println("An unpaid bill already exists for table number: " + tableNumber + ". Bill ID: " + billId);
+                // Có thể thêm logic cập nhật hóa đơn ở đây nếu cần
+            } else {
+                // Tạo hóa đơn mới
+                idBill = new ObjectId();
+                Document newBill = new Document("table_number", tableNumber)
+                        .append("idBill", idBill)
+                        .append("bill", new Document("bill_date", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                                .append("total_price", null))
+                        .append("order", Arrays.asList())
+                        .append("payment_status", "unpaid");
+                billCollection.insertOne(newBill);
 
-            billId = idBill.toString();
-            System.out.println("New bill created for table number: " + tableNumber + ". Bill ID: " + billId);
+                billId = idBill.toString();
+                System.out.println("New bill created for table number: " + tableNumber + ". Bill ID: " + billId);
+            }
+
+            this.idBill = idBill;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error creating new bill. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-
-        this.idBill = idBill;
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Error creating new bill. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
     }
-}
 
-private boolean hasUnpaidBill(int tableNumber) {
-    // Kết nối với cơ sở dữ liệu và kiểm tra hóa đơn
-    // Giả sử bạn có một collection hóa đơn với trường "table_number" và "payment_status"
-    try {
-        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
-        MongoDatabase database = mongoClient.getDatabase("restaurant");
-        MongoCollection<Document> billCollection = database.getCollection("bill");
+    private boolean hasUnpaidBill(int tableNumber) {
+        // Kết nối với cơ sở dữ liệu và kiểm tra hóa đơn
+        // Giả sử bạn có một collection hóa đơn với trường "table_number" và "payment_status"
+        try {
+            MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+            MongoDatabase database = mongoClient.getDatabase("restaurant");
+            MongoCollection<Document> billCollection = database.getCollection("bill");
 
-        Document unpaidBill = billCollection.find(
-            and(eq("table_number", tableNumber), eq("payment_status", "unpaid"))
-        ).first();
+            Document unpaidBill = billCollection.find(
+                    and(eq("table_number", tableNumber), eq("payment_status", "unpaid"))
+            ).first();
 
-        return unpaidBill != null;
-    } catch (Exception e) {
-        e.printStackTrace();
-        // Xử lý lỗi
+            return unpaidBill != null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Xử lý lỗi
+        }
+        return false;
     }
-    return false;
-}
 
-    
-public void createTables() {
-    SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-            try {
-                MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
-                MongoDatabase database = mongoClient.getDatabase("restaurant");
-                MongoCollection<Document> collection = database.getCollection("table");
+    public void createTables() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+                    MongoDatabase database = mongoClient.getDatabase("restaurant");
+                    MongoCollection<Document> collection = database.getCollection("table");
 
-                tablePanel = new JPanel(new GridLayout(3, 4)); // Adjust grid layout as needed
-                tablePanel.setBounds(0, 0, 1050, 590);
-                tablePanel.setBackground(new Color(204,255,255));
+                    tablePanel = new JPanel(new GridLayout(3, 4)); // Adjust grid layout as needed
+                    tablePanel.setBounds(0, 0, 1050, 590);
+                    tablePanel.setBackground(new Color(204, 255, 255));
 
-                for (Document document : collection.find()) {
-                    Integer tableNumber = document.getInteger("table_number");
-                    String tableName = document.getString("table_name");
-                    String trangThai = document.getString("trangthai");
+                    for (Document document : collection.find()) {
+                        Integer tableNumber = document.getInteger("table_number");
+                        String tableName = document.getString("table_name");
+                        String trangThai = document.getString("trangthai");
 
-                    // Debugging print
-                    System.out.println("Table Number: " + tableNumber + ", Table Name: " + tableName);
+                        // Debugging print
+                        System.out.println("Table Number: " + tableNumber + ", Table Name: " + tableName);
 
-                    JLabel status = new JLabel(tableName + " - Tình trạng: " + trangThai);
-                    status.setHorizontalAlignment(JLabel.CENTER); // Canh ngang giữa
-                    status.setVerticalAlignment(JLabel.CENTER);
-                    JPanel tablePanelItem = new JPanel(new BorderLayout());
-                    tablePanelItem.setBackground(new Color(216,250,216));
+                        JLabel status = new JLabel(tableName + " - Tình trạng: " + trangThai);
+                        status.setHorizontalAlignment(JLabel.CENTER); // Canh ngang giữa
+                        status.setVerticalAlignment(JLabel.CENTER);
+                        JPanel tablePanelItem = new JPanel(new BorderLayout());
+                        tablePanelItem.setBackground(new Color(216, 250, 216));
 
-                    // Ensure the imagePath is correctly retrieved and valid
-                    String imagePath = document.getString("imagePath");
-                    ImageIcon imageIcon = new ImageIcon(imagePath);
-                    JLabel imageLabel = new JLabel(imageIcon);
-                    imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/caiban/images.jpg")));
-                    
-                    
-                    // Create a panel for buttons and add it to the SOUTH position
-                    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+                        // Ensure the imagePath is correctly retrieved and valid
+                        String imagePath = document.getString("imagePath");
+                        ImageIcon imageIcon = new ImageIcon(imagePath);
+                        JLabel imageLabel = new JLabel(imageIcon);
+                        imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/caiban/images.jpg")));
 
-                    JButton actionButton = new JButton();
-                    buttonPanel.add(actionButton);
-                                            buttonPanel.setBackground(new Color(216,250,216));
+                        // Create a panel for buttons and add it to the SOUTH position
+                        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-                    tablePanelItem.add(buttonPanel, BorderLayout.SOUTH);
+                        JButton actionButton = new JButton();
+                        buttonPanel.add(actionButton);
+                        buttonPanel.setBackground(new Color(216, 250, 216));
 
-                    // Create buttons based on the table status
-                    if ("Ban Trong".equals(trangThai)) {
-                        actionButton.setText("Đặt Bàn");
+                        tablePanelItem.add(buttonPanel, BorderLayout.SOUTH);
+
+                        // Create buttons based on the table status
+                        if ("Ban Trong".equals(trangThai)) {
+                            actionButton.setText("Đặt Bàn");
 //                        actionButton.setBackground(new Color(204,255,255));
-                        actionButton.addActionListener(e -> {
-                            // Display a confirmation dialog
-                            int result = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + tableNumber + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
+                            actionButton.addActionListener(e -> {
+                                // Display a confirmation dialog
+                                int result = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + tableNumber + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
 
-                            if (result == JOptionPane.YES_OPTION) {
-                                // Update the table status in the database (assuming you have a method to update the database)
-                                updateTableStatus(tableNumber, "Ban Da Dat");
+                                if (result == JOptionPane.YES_OPTION) {
+                                    // Update the table status in the database (assuming you have a method to update the database)
+                                    updateTableStatus(tableNumber, "Ban Da Dat");
 
-                                // Change the button text to "Gọi Món"
-                                actionButton.setText("Gọi Món");
+                                    // Change the button text to "Gọi Món"
+                                    actionButton.setText("Gọi Món");
 
-                                // Add "Hủy Bàn" button
-                                JButton cancelButton = new JButton("Hủy Bàn");
+                                    // Add "Hủy Bàn" button
+                                    JButton cancelButton = new JButton("Hủy Bàn");
+                                    cancelButton.addActionListener(cancelEvent -> {
+                                        // Confirm cancellation with a dialog
+                                        int cancelResult = JOptionPane.showConfirmDialog(
+                                                null,
+                                                "Bạn có chắc chắn muốn hủy bàn số " + tableNumber + " không?",
+                                                "Xác Nhận Hủy Bàn",
+                                                JOptionPane.YES_NO_OPTION
+                                        );
+
+                                        // Check if the user confirmed the cancellation
+                                        if (cancelResult == JOptionPane.YES_OPTION) {
+                                            updateTableStatus(tableNumber, "Ban Trong");
+                                            actionButton.setText("Đặt Bàn");
+
+                                            // Remove "Gọi Món" and "Hủy Bàn" buttons
+                                            buttonPanel.removeAll();
+                                            buttonPanel.add(actionButton);
+
+                                            // Repaint the panel
+                                            tablePanelItem.revalidate();
+                                            tablePanelItem.repaint();
+                                        }
+                                    });
+
+                                    // Add "Gọi Món" button
+                                    JButton orderButton = new JButton("Gọi Món");
+                                    orderButton.addActionListener(orderEvent -> {
+                                        createNewBill(tableNumber);
+                                        // Add code to handle the action when the "Gọi Món" button is clicked
+                                        System.out.println("Gọi Món clicked for table number: " + tableNumber);
+                                        openGoiMon(tableNumber, idNV);
+                                    });
+
+                                    // Add buttons to the buttonPanel   
+                                    buttonPanel.removeAll();
+                                    buttonPanel.add(orderButton);
+                                    buttonPanel.add(cancelButton);
+
+                                    // Repaint the panel
+                                    tablePanelItem.revalidate();
+                                    tablePanelItem.repaint();
+                                }
+                            });
+                        } else if ("Ban Da Dat".equals(trangThai)) {
+                            actionButton.setText("Gọi Món");
+                            actionButton.addActionListener(orderEvent -> {
+                                createNewBill(tableNumber);
+                                // Add code to handle the action when the "Gọi Món" button is clicked
+                                System.out.println("Gọi Món clicked for table number: " + tableNumber);
+                                openGoiMon(tableNumber, idNV);
+                            });
+                            // Add "Hủy Bàn" button
+                            JButton cancelButton = new JButton("Hủy Bàn");
+                            if (!hasUnpaidBill(tableNumber)) {
                                 cancelButton.addActionListener(cancelEvent -> {
-                                    // Confirm cancellation with a dialog
-                                    int cancelResult = JOptionPane.showConfirmDialog(
-                                        null, 
-                                        "Bạn có chắc chắn muốn hủy bàn số " + tableNumber + " không?", 
-                                        "Xác Nhận Hủy Bàn", 
-                                        JOptionPane.YES_NO_OPTION
-                                    );
-
-                                    // Check if the user confirmed the cancellation
-                                    if (cancelResult == JOptionPane.YES_OPTION) {
+                                    int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn hủy bàn số " + tableNumber + "?", "Xác Nhận Hủy Bàn", JOptionPane.YES_NO_OPTION);
+                                    if (confirm == JOptionPane.YES_OPTION) {
+                                        // Add code to handle the action when the "Hủy Bàn" button is clicked
                                         updateTableStatus(tableNumber, "Ban Trong");
                                         actionButton.setText("Đặt Bàn");
 
                                         // Remove "Gọi Món" and "Hủy Bàn" buttons
                                         buttonPanel.removeAll();
+
+                                        // Add "Đặt Bàn" button
+                                        actionButton.addActionListener(e -> {
+                                            // Display a confirmation dialog
+                                            int result = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + tableNumber + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
+
+                                            if (result == JOptionPane.YES_OPTION) {
+                                                // Update the table status in the database (assuming you have a method to update the database)
+                                                updateTableStatus(tableNumber, "Ban Da Dat");
+
+                                                // Change the button text to "Gọi Món"
+                                                actionButton.setText("Gọi Món");
+
+                                                // Add "Hủy Bàn" button
+                                                JButton newCancelButton = new JButton("Hủy Bàn");
+                                                newCancelButton.addActionListener(newCancelEvent -> {
+                                                    updateTableStatus(tableNumber, "Ban Trong");
+                                                    actionButton.setText("Đặt Bàn");
+                                                    // Remove "Gọi Món" and "Hủy Bàn" buttons
+                                                    buttonPanel.removeAll();
+                                                    // Add "Đặt Bàn" button
+                                                    buttonPanel.add(actionButton);
+                                                    // Repaint the panel
+                                                    tablePanelItem.revalidate();
+                                                    tablePanelItem.repaint();
+                                                });
+
+                                                // Add "Gọi Món" button
+                                                JButton newOrderButton = new JButton("Gọi Món");
+                                                newOrderButton.addActionListener(newOrderEvent -> {
+                                                    createNewBill(tableNumber);
+                                                    //                    int createResult = JOptionPane.showConfirmDialog(null, "Xác nhận gọi món cho bàn số " + tableNumber + "? (Không thể hủy bàn sau khi gọi mon)", "Xác Nhận", JOptionPane.YES_NO_OPTION);
+                                                    // Add code to handle the action when the "Gọi Món" button is clicked
+                                                    System.out.println("Gọi Món clicked for table number: " + tableNumber);
+                                                    openGoiMon(tableNumber, idNV);
+                                                    dispose();  // Close the current form
+                                                });
+
+                                                // Add buttons to the buttonPanel   
+                                                buttonPanel.removeAll();
+                                                buttonPanel.add(newOrderButton);
+                                                buttonPanel.add(newCancelButton);
+
+                                                // Repaint the panel
+                                                tablePanelItem.revalidate();
+                                                tablePanelItem.repaint();
+                                            }
+                                        });
+
+                                        // Add the actionButton to the buttonPanel
                                         buttonPanel.add(actionButton);
 
-                                        // Repaint the panel
+                                        // Repaint the panel    
                                         tablePanelItem.revalidate();
                                         tablePanelItem.repaint();
                                     }
                                 });
-
-                                // Add "Gọi Món" button
-                                JButton orderButton = new JButton("Gọi Món");
-                                orderButton.addActionListener(orderEvent -> {
-                                      createNewBill(tableNumber);
-                                    // Add code to handle the action when the "Gọi Món" button is clicked
-                                    System.out.println("Gọi Món clicked for table number: " + tableNumber);
-                                    GoiMon goiMonFrame = new GoiMon(tableNumber,idNV);
-                                    goiMonFrame.setVisible(true);
-                                    dispose();  // Close the current form
-                                });
-
-                                // Add buttons to the buttonPanel   
-                                buttonPanel.removeAll();
-                                buttonPanel.add(orderButton);
                                 buttonPanel.add(cancelButton);
-
-                                // Repaint the panel
-                                tablePanelItem.revalidate();
-                                tablePanelItem.repaint();
+                            } else {
+                                // Có thể hiển thị thông báo hoặc làm mờ nút nếu có hóa đơn chưa thanh toán
+                                cancelButton.setEnabled(false);
+                                buttonPanel.add(cancelButton);
                             }
-                        });
-                    } else if ("Ban Da Dat".equals(trangThai)) {
-    actionButton.setText("Gọi Món");
-    actionButton.addActionListener(orderEvent -> {
-        
-        createNewBill(tableNumber);
-        // Add code to handle the action when the "Gọi Món" button is clicked
-        System.out.println("Gọi Món clicked for table number: " + tableNumber);
-        openGoiMon(tableNumber,idNV);
+                            // Add buttons to the buttonPanel
+                            buttonPanel.setBackground(new Color(216, 250, 216));
+                            buttonPanel.add(actionButton);
+                            buttonPanel.add(cancelButton);
 
-    });
+                            // Repaint the panel
+                            tablePanelItem.revalidate();
+                            tablePanelItem.repaint();
+                        }
 
-    // Add "Hủy Bàn" button
-    JButton cancelButton = new JButton("Hủy Bàn");
-    if (!hasUnpaidBill(tableNumber)) {
-    cancelButton.addActionListener(cancelEvent -> {
-        
-        int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc chắn muốn hủy bàn số " + tableNumber + "?", "Xác Nhận Hủy Bàn", JOptionPane.YES_NO_OPTION);
-        if (confirm == JOptionPane.YES_OPTION) {
-            // Add code to handle the action when the "Hủy Bàn" button is clicked
-        updateTableStatus(tableNumber, "Ban Trong");
-        actionButton.setText("Đặt Bàn");
+                        // Set the foreground color to make the text visible on the background
+                        status.setForeground(Color.BLACK);
 
-        // Remove "Gọi Món" and "Hủy Bàn" buttons
-        buttonPanel.removeAll();
+                        // Set other properties, e.g., opaque to make the background color visible
+                        status.setOpaque(true);
+                        status.setBackground(new Color(216, 250, 216));
 
-        // Add "Đặt Bàn" button
-        actionButton.addActionListener(e -> {
-            // Display a confirmation dialog
-            int result = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + tableNumber + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
+                        tablePanelItem.add(status, BorderLayout.NORTH);
+                        tablePanelItem.add(imageLabel, BorderLayout.CENTER);
 
-            if (result == JOptionPane.YES_OPTION) {
-                // Update the table status in the database (assuming you have a method to update the database)
-                updateTableStatus(tableNumber, "Ban Da Dat");
-
-                // Change the button text to "Gọi Món"
-                actionButton.setText("Gọi Món");
-
-                // Add "Hủy Bàn" button
-                JButton newCancelButton = new JButton("Hủy Bàn");
-                newCancelButton.addActionListener(newCancelEvent -> {
-                    updateTableStatus(tableNumber, "Ban Trong");
-                    actionButton.setText("Đặt Bàn");
-                    // Remove "Gọi Món" and "Hủy Bàn" buttons
-                    buttonPanel.removeAll();
-                    // Add "Đặt Bàn" button
-                    buttonPanel.add(actionButton);
-                    // Repaint the panel
-                    tablePanelItem.revalidate();
-                    tablePanelItem.repaint();
-                });
-
-                // Add "Gọi Món" button
-                JButton newOrderButton = new JButton("Gọi Món");
-                newOrderButton.addActionListener(newOrderEvent -> {
-                        createNewBill(tableNumber);
-        //                    int createResult = JOptionPane.showConfirmDialog(null, "Xác nhận gọi món cho bàn số " + tableNumber + "? (Không thể hủy bàn sau khi gọi mon)", "Xác Nhận", JOptionPane.YES_NO_OPTION);
-                    // Add code to handle the action when the "Gọi Món" button is clicked
-                    System.out.println("Gọi Món clicked for table number: " + tableNumber);
-                    openGoiMon(tableNumber,idNV);
-                    dispose();  // Close the current form
-                });
-
-                // Add buttons to the buttonPanel   
-                buttonPanel.removeAll();
-                buttonPanel.add(newOrderButton);
-                buttonPanel.add(newCancelButton);
-
-
-                // Repaint the panel
-                tablePanelItem.revalidate();
-                tablePanelItem.repaint();
+                        tablePanel.add(tablePanelItem);
+                    }
+                    tablePanel.setBackground(new Color(216, 250, 216));
+                    jPanel1.add(tablePanel);
+                    jPanel1.revalidate();
+                    jPanel1.repaint();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
+    }
 
-        // Add the actionButton to the buttonPanel
-        buttonPanel.add(actionButton);
-
-        // Repaint the panel    
-        tablePanelItem.revalidate();
-        tablePanelItem.repaint();
-            }
-            });
-            buttonPanel.add(cancelButton);
-        } else {
-            // Có thể hiển thị thông báo hoặc làm mờ nút nếu có hóa đơn chưa thanh toán
-            cancelButton.setEnabled(false);
-            buttonPanel.add(cancelButton);
-        }
-    // Add buttons to the buttonPanel
-    buttonPanel.setBackground(new Color(216,250,216));
-    buttonPanel.add(actionButton);
-    buttonPanel.add(cancelButton);
-
-    // Repaint the panel
-    tablePanelItem.revalidate();
-    tablePanelItem.repaint();
-}
-
-                    // Set the foreground color to make the text visible on the background
-                    status.setForeground(Color.BLACK);
-
-                    // Set other properties, e.g., opaque to make the background color visible
-                    status.setOpaque(true);
-                    status.setBackground(new Color(216,250,216));
-
-                    tablePanelItem.add(status, BorderLayout.NORTH);
-                    tablePanelItem.add(imageLabel, BorderLayout.CENTER);
-
-                    tablePanel.add(tablePanelItem);
-                }
-                tablePanel.setBackground(new Color(216,250,216));
-                jPanel1.add(tablePanel);
-                jPanel1.revalidate();
-                jPanel1.repaint();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    });
-}
-
-
-    
     private void updateTableStatus(int tableNumber, String newStatus) {
         try {
             // Connect to MongoDB
@@ -540,20 +530,21 @@ public void createTables() {
             JOptionPane.showMessageDialog(null, "Error updating table status. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-private void openGoiMon(int tableNumber, ObjectId idNV) {
-    GoiMon goiMonFrame = new GoiMon(tableNumber, this.idBill, this.idNV);
-    goiMonFrame.setVisible(true);
-    this.dispose(); // hoặc logic khác theo dòng chảy ứng dụng của bạn
-}    
-     private void tableButtonActionPerformed(java.awt.event.ActionEvent evt) {
+
+    private void openGoiMon(int tableNumber, ObjectId idNV) {
+        GoiMon goiMonFrame = new GoiMon(tableNumber, this.idBill, this.idNV);
+        goiMonFrame.setVisible(true);
+        this.dispose(); // hoặc logic khác theo dòng chảy ứng dụng của bạn
+    }
+
+    private void tableButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // Handle table button click event if needed
         // You can add specific actions when a table button is clicked
         // For now, I'll just print a message to the console
         JButton clickedButton = (JButton) evt.getSource();
         System.out.println("Table clicked: " + clickedButton.getText());
     }
-  
+
     /**
      * @param args the command line arguments
      */
@@ -588,7 +579,7 @@ private void openGoiMon(int tableNumber, ObjectId idNV) {
             }
         });
     }
-    
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private java.awt.Canvas canvas1;

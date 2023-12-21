@@ -1,8 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
+
 import org.bson.types.ObjectId;
 import view.Adminqualynhanvien;
 import view.Interface;
@@ -25,21 +22,24 @@ import javax.swing.JOptionPane;
 import java.awt.FlowLayout;
 import javax.swing.table.DefaultTableModel;
 import org.bson.types.ObjectId;
+
 /**
  *
  * @author kevin
  */
 public class ThongTinNhanVien extends javax.swing.JFrame {
-    
+
     public ObjectId idNV;
+
     /**
      * Creates new form Admin
      */
-    
+
     public ThongTinNhanVien() {
         initComponents();
         System.out.println(idNV);
     }
+
     public ThongTinNhanVien(ObjectId idNV) {
         this.idNV = idNV;
         initComponents();
@@ -121,7 +121,7 @@ public class ThongTinNhanVien extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI Semibold", 1, 24)); // NOI18N
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/hired.png"))); // NOI18N
-        jLabel2.setText("Thêm Nhân Viên");
+        jLabel2.setText("Thông Tin Nhân Viên");
 
         jLabel4.setFont(new java.awt.Font("Segoe UI Semibold", 1, 22)); // NOI18N
         jLabel4.setText("Tên nhân viên");
@@ -307,13 +307,13 @@ public class ThongTinNhanVien extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-    Interface interface123 = new Interface(idNV);
-    interface123.setVisible(true);
-    this.dispose(); // Đóng cửa sổ hiện tại (Admin)
+        Interface interface123 = new Interface(idNV);
+        interface123.setVisible(true);
+        this.dispose(); // Đóng cửa sổ hiện tại (Admin)
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-Login loginform = new Login();
+        Login loginform = new Login();
         loginform.setVisible(true);
         this.dispose();           // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
@@ -329,31 +329,31 @@ Login loginform = new Login();
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
         MongoClient mongoClient = null;
-    try {
-        mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test"); // Thay thế với connection string thực tế
-        MongoDatabase database = mongoClient.getDatabase("restaurant");
-        MongoCollection<Document> collection = database.getCollection("users");
+        try {
+            mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test"); // Thay thế với connection string thực tế
+            MongoDatabase database = mongoClient.getDatabase("restaurant");
+            MongoCollection<Document> collection = database.getCollection("users");
 
-        Document updateDocument = new Document()
-            .append("Ten", jTextField2.getText()) // Tên nhân viên
-            .append("username", jTextField3.getText()) // Tài khoản
-            .append("Matkhau", jTextField4.getText()) // Mật khẩu
-            .append("Email", jTextField5.getText()); // Email
+            Document updateDocument = new Document()
+                    .append("Ten", jTextField2.getText()) // Tên nhân viên
+                    .append("username", jTextField3.getText()) // Tài khoản
+                    .append("Matkhau", jTextField4.getText()) // Mật khẩu
+                    .append("Email", jTextField5.getText()); // Email
             // Thêm các trường khác nếu cần
 
-        Document query = new Document("_id", idNV);
-        collection.updateOne(query, new Document("$set", updateDocument), new UpdateOptions().upsert(true));
+            Document query = new Document("_id", idNV);
+            collection.updateOne(query, new Document("$set", updateDocument), new UpdateOptions().upsert(true));
 
-        JOptionPane.showMessageDialog(this, "Thông tin đã được cập nhật.");
+            JOptionPane.showMessageDialog(this, "Thông tin đã được cập nhật.");
 
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Có lỗi xảy ra khi cập nhật dữ liệu.");
-    } finally {
-        if (mongoClient != null) {
-            mongoClient.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Có lỗi xảy ra khi cập nhật dữ liệu.");
+        } finally {
+            if (mongoClient != null) {
+                mongoClient.close();
+            }
         }
-    }
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
@@ -393,7 +393,7 @@ Login loginform = new Login();
             }
         }
     }
-    
+
     /**
      * @param args the command line arguments
      */

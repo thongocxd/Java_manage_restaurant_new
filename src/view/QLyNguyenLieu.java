@@ -1,8 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
+
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
@@ -24,13 +21,16 @@ import java.awt.FlowLayout;
 import javax.swing.table.DefaultTableModel;
 import org.bson.types.ObjectId;
 import view.Adminqualyhoadon;
+
 /**
  *
  * @author kevin
  */
 public class QLyNguyenLieu extends javax.swing.JFrame {
+
     private ThongTinNhanVien thongtinnhanvienForm;
     private Login loginForm;
+
     /**
      * Creates new form Admin
      */
@@ -40,7 +40,6 @@ public class QLyNguyenLieu extends javax.swing.JFrame {
         thongtinnhanvienForm = new ThongTinNhanVien();
         loginForm = new Login();
 
-      
     }
 
     /**
@@ -235,7 +234,7 @@ public class QLyNguyenLieu extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -248,79 +247,79 @@ public class QLyNguyenLieu extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-   AddNguyenLieu addNguyenLieuForm = new AddNguyenLieu(this); // Assuming AddNguyenLieu does not require an argument
-    addNguyenLieuForm.setVisible(true);
+        AddNguyenLieu addNguyenLieuForm = new AddNguyenLieu(this); // Assuming AddNguyenLieu does not require an argument
+        addNguyenLieuForm.setVisible(true);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
- System.out.println("Button clicked"); // Simple debugging line
+        System.out.println("Button clicked"); // Simple debugging line
 
-    int selectedRow = jTable1.getSelectedRow();
-    if (selectedRow >= 0) {
-        String id = jTable1.getValueAt(selectedRow, 0).toString();
-        String tenNguyenLieu = jTable1.getValueAt(selectedRow, 1).toString();
-        String dongGia = jTable1.getValueAt(selectedRow, 2).toString();
-        String donViTinh = jTable1.getValueAt(selectedRow, 3).toString();
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow >= 0) {
+            String id = jTable1.getValueAt(selectedRow, 0).toString();
+            String tenNguyenLieu = jTable1.getValueAt(selectedRow, 1).toString();
+            String dongGia = jTable1.getValueAt(selectedRow, 2).toString();
+            String donViTinh = jTable1.getValueAt(selectedRow, 3).toString();
 
-        System.out.println("Retrieved from table: " + tenNguyenLieu + ", " + dongGia + ", " + donViTinh); // Debugging line
+            System.out.println("Retrieved from table: " + tenNguyenLieu + ", " + dongGia + ", " + donViTinh); // Debugging line
 
-        // Assuming the method signature is correct, call the updateIngredientInDatabase method
-        updateIngredientInDatabase(id, tenNguyenLieu, dongGia, donViTinh);
-        
-        // Refresh the jTable1 to reflect the changes in the database
-        displayDataToTable();
-    } else {
-        // Handle the case where no row is selected
-        JOptionPane.showMessageDialog(this, "Please select an ingredient to update.", "No Ingredient Selected", JOptionPane.WARNING_MESSAGE);
-    }
+            // Assuming the method signature is correct, call the updateIngredientInDatabase method
+            updateIngredientInDatabase(id, tenNguyenLieu, dongGia, donViTinh);
+
+            // Refresh the jTable1 to reflect the changes in the database
+            displayDataToTable();
+        } else {
+            // Handle the case where no row is selected
+            JOptionPane.showMessageDialog(this, "Please select an ingredient to update.", "No Ingredient Selected", JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
-         // TODO add your handling code here:
+        // TODO add your handling code here:
         int selectedRow = jTable1.getSelectedRow();
-    if (selectedRow >= 0) {
-        String id = jTable1.getValueAt(selectedRow, 0).toString();
-        
-        // Delete from the database
-       deleteIngredientFromDatabase(id);
+        if (selectedRow >= 0) {
+            String id = jTable1.getValueAt(selectedRow, 0).toString();
 
-        // Remove from the table model to update UI
-        ((DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
-    } else {
-        JOptionPane.showMessageDialog(this, "Please select a row to delete.");
-    }
-       
+            // Delete from the database
+            deleteIngredientFromDatabase(id);
+
+            // Remove from the table model to update UI
+            ((DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
+        } else {
+            JOptionPane.showMessageDialog(this, "Please select a row to delete.");
+        }
+
     }//GEN-LAST:event_jButton8ActionPerformed
     private void updateIngredientInDatabase(String id, String nguyenLieuName, String dongGia, String donViTinh) {
-    MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
-    MongoDatabase database = mongoClient.getDatabase("restaurant");
-    MongoCollection<Document> collection = database.getCollection("nguyenlieu");
-
-    Document filter = new Document("_id", new ObjectId(id));
-    Document updatedDocument = new Document("$set", new Document("TenNguyenLieu", nguyenLieuName)
-            .append("DongGia", dongGia)
-            .append("donViTinh", donViTinh));
-
-    collection.updateOne(filter, updatedDocument);
-    mongoClient.close();
-
-    System.out.println("Updating: " + id + ", " + nguyenLieuName + ", " + dongGia + ", " + donViTinh);
-}
-
-    private void deleteIngredientFromDatabase(String id) {
-    try (MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test")) {
+        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
         MongoDatabase database = mongoClient.getDatabase("restaurant");
         MongoCollection<Document> collection = database.getCollection("nguyenlieu");
 
         Document filter = new Document("_id", new ObjectId(id));
-        collection.deleteOne(filter);
-    } catch (Exception e) {
-        e.printStackTrace(); // For debugging purposes
+        Document updatedDocument = new Document("$set", new Document("TenNguyenLieu", nguyenLieuName)
+                .append("DongGia", dongGia)
+                .append("donViTinh", donViTinh));
+
+        collection.updateOne(filter, updatedDocument);
+        mongoClient.close();
+
+        System.out.println("Updating: " + id + ", " + nguyenLieuName + ", " + dongGia + ", " + donViTinh);
     }
-}
-    
-   private void displayDataToTable() {
+
+    private void deleteIngredientFromDatabase(String id) {
+        try (MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test")) {
+            MongoDatabase database = mongoClient.getDatabase("restaurant");
+            MongoCollection<Document> collection = database.getCollection("nguyenlieu");
+
+            Document filter = new Document("_id", new ObjectId(id));
+            collection.deleteOne(filter);
+        } catch (Exception e) {
+            e.printStackTrace(); // For debugging purposes
+        }
+    }
+
+    private void displayDataToTable() {
         // Kết nối tới MongoDB
         try (MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/")) {
             MongoDatabase database = mongoClient.getDatabase("restaurant"); // Thay "ten_database" bằng tên database của bạn
@@ -337,15 +336,14 @@ public class QLyNguyenLieu extends javax.swing.JFrame {
             model.addColumn("Donggia");
             model.addColumn("donViTinh");
 
-            
             // Đưa dữ liệu vào model
             while (cursor.hasNext()) {
                 Document document = cursor.next();
                 model.addRow(new Object[]{
-                        document.getObjectId("_id"),
-                        document.getString("nguyenLieuName"),
-                        document.getString("dongGia"),
-                        document.getString("donViTinh")
+                    document.getObjectId("_id"),
+                    document.getString("nguyenLieuName"),
+                    document.getString("dongGia"),
+                    document.getString("donViTinh")
                 });
             }
 
@@ -356,8 +354,6 @@ public class QLyNguyenLieu extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
-    
-    
 
     /**
      * @param args the command line arguments

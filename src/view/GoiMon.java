@@ -1,5 +1,5 @@
-
 package view;
+
 import utils.FoodUtils;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
@@ -19,11 +19,12 @@ import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JOptionPane;
 import java.awt.FlowLayout;
+import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFrame;
 import javax.swing.JTextField;
 import org.bson.types.ObjectId; // Import ObjectId class
 import view.DatBan;
-
 
 /**
  *
@@ -34,6 +35,9 @@ import view.DatBan;
  * @param <cmdAdj>
  */
 public class GoiMon extends javax.swing.JFrame {
+
+    List<JFrame> openWindows = new ArrayList<>();
+
     private int table_Number;
 //    System.out.println(idBill);
     public ObjectId idNV;
@@ -46,11 +50,10 @@ public class GoiMon extends javax.swing.JFrame {
 
     // Now you can call getIdBill() on this instance
     ObjectId idBill = datBanInstance.getIdBill();
-    
-    public ObjectId getIdBill(){
-    return idBill;
-}
-    
+
+    public ObjectId getIdBill() {
+        return idBill;
+    }
 
     // Print idBill    
     // Add this line to declare the tablePanel variable
@@ -59,15 +62,16 @@ public class GoiMon extends javax.swing.JFrame {
     /**
      * Creates new form DatBan
      */
-    
     public GoiMon() {
     }
+
     public GoiMon(int table_Number) {
         this.table_Number = table_Number;
         initComponents();
         createTables();
         displayTableName();
     }
+
     public GoiMon(int table_Number, ObjectId idNV) {
         this.idNV = idNV;
         this.table_Number = table_Number;
@@ -75,6 +79,7 @@ public class GoiMon extends javax.swing.JFrame {
         createTables();
         displayTableName();
     }
+
     public GoiMon(int table_Number, ObjectId idBill, ObjectId idNV) {
         this.idNV = idNV;
         this.table_Number = table_Number;
@@ -83,8 +88,10 @@ public class GoiMon extends javax.swing.JFrame {
         createTables();
         displayTableName();
         System.out.println(idBill);
+        GoiMon goiMonForm = new GoiMon();
+        openWindows.add(goiMonForm);
+        goiMonForm.setVisible(true);
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -229,60 +236,60 @@ public class GoiMon extends javax.swing.JFrame {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-            // Create an instance of ThanhToan class and pass necessary parameters
-            ThanhToan thanhToan = new ThanhToan(this.table_Number, this.idBill);
-            thanhToan.setVisible(true); // Display the ThanhToan frame
+        // Create an instance of ThanhToan class and pass necessary parameters
+        ThanhToan thanhToan = new ThanhToan(this.table_Number, this.idBill);
+        thanhToan.setVisible(true); // Display the ThanhToan frame
 //            this.dispose(); // Optionally, close the current GoiMon frame
-        
+
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
 
-    // Create an instance of DatBan and show it
-    DatBan datBanForm = new DatBan(idNV);
-    datBanForm.setVisible(true);
-    this.dispose();  // Close the current form
+        // Create an instance of DatBan and show it
+        DatBan datBanForm = new DatBan(idNV);
+        datBanForm.setVisible(true);
+        this.dispose();  // Close the current form
 
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-            try {
-        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
-        MongoDatabase database = mongoClient.getDatabase("restaurant");
-        MongoCollection<Document> billCollection = database.getCollection("bill");
+        try {
+            MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+            MongoDatabase database = mongoClient.getDatabase("restaurant");
+            MongoCollection<Document> billCollection = database.getCollection("bill");
 
-        Document billDocument = billCollection.find(eq("idBill", idBill)).first();
-        if (billDocument != null) {
-            List<Document> orderedItems = (List<Document>) billDocument.get("order");
-            StringBuilder billInfo = new StringBuilder("Order Details:\n");
+            Document billDocument = billCollection.find(eq("idBill", idBill)).first();
+            if (billDocument != null) {
+                List<Document> orderedItems = (List<Document>) billDocument.get("order");
+                StringBuilder billInfo = new StringBuilder("Order Details:\n");
 
-            for (Document item : orderedItems) {
-                int foodId = item.getInteger("foodId");
-                int quantity = item.getInteger("quantity");
+                for (Document item : orderedItems) {
+                    int foodId = item.getInteger("foodId");
+                    int quantity = item.getInteger("quantity");
 
-                String foodName = FoodUtils.getFoodNameFromMongoDB(database, foodId);
-                int foodPrice = FoodUtils.getFoodPriceFromMongoDB(database, foodId);
-                int totalPrice = foodPrice * quantity;
+                    String foodName = FoodUtils.getFoodNameFromMongoDB(database, foodId);
+                    int foodPrice = FoodUtils.getFoodPriceFromMongoDB(database, foodId);
+                    int totalPrice = foodPrice * quantity;
 
-                String formattedLine = String.format("   Món: %-20s x%-10d %6d VND", foodName, quantity, totalPrice);
-                billInfo.append(formattedLine).append("\n");
+                    String formattedLine = String.format("   Món: %-20s x%-10d %6d VND", foodName, quantity, totalPrice);
+                    billInfo.append(formattedLine).append("\n");
+                }
+
+                JOptionPane.showMessageDialog(this, billInfo.toString(), "Món Đã Gọi", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy hóa đơn.", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
             }
-
-            JOptionPane.showMessageDialog(this, billInfo.toString(), "Món Đã Gọi", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(this, "Không tìm thấy hóa đơn.", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi truy vấn cơ sở dữ liệu.", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Lỗi khi truy vấn cơ sở dữ liệu.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-    }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
@@ -290,11 +297,12 @@ public class GoiMon extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     public void openThanhToan(int tableNumber) {
-    // Assuming idBill is already generated/set in DatBan class
-    ThanhToan thanhToanFrame = new ThanhToan(tableNumber, idBill);
-    thanhToanFrame.setVisible(true);
-    this.dispose();
+        // Assuming idBill is already generated/set in DatBan class
+        ThanhToan thanhToanFrame = new ThanhToan(tableNumber, idBill);
+        thanhToanFrame.setVisible(true);
+        this.dispose();
     }
+
     private void displayTableName() {
         try {
             MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
@@ -305,7 +313,7 @@ public class GoiMon extends javax.swing.JFrame {
             if (tableDocument != null) {
                 String tableName = tableDocument.getString("table_Name");
                 jButton1.setText(tableName); // Hiển thị tên bàn trên nút
-                jTextField1.setText("Bàn số  " + table_Number ); // Hiển thị số và tên bàn trong jTextField1
+                jTextField1.setText("Bàn số  " + table_Number); // Hiển thị số và tên bàn trong jTextField1
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -313,6 +321,7 @@ public class GoiMon extends javax.swing.JFrame {
         }
     }
 //Update hóa đơn
+
     private void updateOrderInBill(ObjectId idBill, Document foodDocument) {
         try {
             MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
@@ -329,7 +338,7 @@ public class GoiMon extends javax.swing.JFrame {
                 List<Document> orderList = (List<Document>) billDocument.get("order");
                 orderList.add(foodDocument);
                 // Update the bill in MongoDB
-                            System.out.print("dayneeeeeeeeeeeeeeeeeeeee");
+                System.out.print("dayneeeeeeeeeeeeeeeeeeeee");
                 billCollection.updateOne(query, new Document("$set", new Document("order", orderList)));
             } else {
                 System.out.println("Bill not found for ID: " + idBill);
@@ -341,289 +350,283 @@ public class GoiMon extends javax.swing.JFrame {
         }
     }
 
-public void createTables() {
-    SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-            try {
-                MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
-                MongoDatabase database = mongoClient.getDatabase("restaurant");
-                MongoCollection<Document> collection = database.getCollection("food");
-              
+    public void createTables() {
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/");
+                    MongoDatabase database = mongoClient.getDatabase("restaurant");
+                    MongoCollection<Document> collection = database.getCollection("food");
 
-                tablePanel = new JPanel(new GridLayout(4, 6)); // Adjust grid layout as needed
-                tablePanel.setBounds(130, 0, 980, 600);
-                tablePanel.setBackground(new Color(216,250,216));
+                    tablePanel = new JPanel(new GridLayout(4, 6)); // Adjust grid layout as needed
+                    tablePanel.setBounds(130, 0, 980, 600);
+                    tablePanel.setBackground(new Color(216, 250, 216));
 
-                for (Document document : collection.find()) {
-                    String foodName = document.getString("foodName");
-                    String price = document.getString("price");
-                    String status = document.getString("status");
-                    Integer foodId = document.getInteger("foodId");
-                    String images = document.getString("image");
-                    
-                    System.out.println(images);
-                    // Debugging print
-                    System.out.println("Food name: " + foodName + ", Price: " + price);
-                     // Display the first foodName in the jTextField1
-                 
+                    for (Document document : collection.find()) {
+                        String foodName = document.getString("foodName");
+                        String price = document.getString("price");
+                        String status = document.getString("status");
+                        Integer foodId = document.getInteger("foodId");
+                        String images = document.getString("image");
 
-                    JLabel status1 = new JLabel("   " + foodName + " - " + status);
-                    status1.setHorizontalAlignment(JLabel.CENTER); // Canh ngang giữa
-                    status1.setVerticalAlignment(JLabel.CENTER);
-                    status1.setBackground(new Color(216,250,216));
-                    JPanel tablePanelItem = new JPanel(new BorderLayout());
-                      // Add Increase and Decrease buttons
-                    JButton increaseButton = new JButton("+");
-                    JButton decreaseButton = new JButton("-");
-                    
+                        System.out.println(images);
+                        // Debugging print
+                        System.out.println("Food name: " + foodName + ", Price: " + price);
+                        // Display the first foodName in the jTextField1
 
-                    // Ensure the imagePath is correctly retrieved and valid
-                    String imagePath = document.getString("imagePath");
-                    ImageIcon imageIcon = new ImageIcon(imagePath);
-                    JLabel imageLabel = new JLabel(imageIcon);
-                    imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource(images)));
-                    imageLabel.setPreferredSize(new Dimension(300, 300));
-                    imageLabel.setMinimumSize(new Dimension(300, 300));
-                    
-                    
-                    // Create a panel for buttons and add it to the SOUTH position
-                    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-                    buttonPanel.setBackground(new Color(216,250,216));
+                        JLabel status1 = new JLabel("   " + foodName + " - " + status);
+                        status1.setHorizontalAlignment(JLabel.CENTER); // Canh ngang giữa
+                        status1.setVerticalAlignment(JLabel.CENTER);
+                        status1.setBackground(new Color(216, 250, 216));
+                        JPanel tablePanelItem = new JPanel(new BorderLayout());
+                        // Add Increase and Decrease buttons
+                        JButton increaseButton = new JButton("+");
+                        JButton decreaseButton = new JButton("-");
 
-                    JButton actionButton = new JButton();
-                    buttonPanel.add(actionButton);
-                    
-                     increaseButton.addActionListener(e -> {
-                    // Implement logic to increase the quantity of the product
-                    System.out.println("Increase quantity for " + foodName);
-                });
+                        // Ensure the imagePath is correctly retrieved and valid
+                        String imagePath = document.getString("imagePath");
+                        ImageIcon imageIcon = new ImageIcon(imagePath);
+                        JLabel imageLabel = new JLabel(imageIcon);
+                        imageLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource(images)));
+                        imageLabel.setPreferredSize(new Dimension(300, 300));
+                        imageLabel.setMinimumSize(new Dimension(300, 300));
 
-                decreaseButton.addActionListener(e -> {
-                    // Implement logic to decrease the quantity of the product
-                    System.out.println("Decrease quantity for " + foodName);
-                });
+                        // Create a panel for buttons and add it to the SOUTH position
+                        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+                        buttonPanel.setBackground(new Color(216, 250, 216));
 
-                // Add buttons to the button panel
-                buttonPanel.setBackground(new Color(216,250,216));
-                buttonPanel.add(increaseButton);
-                buttonPanel.add(decreaseButton);
+                        JButton actionButton = new JButton();
+                        buttonPanel.add(actionButton);
 
-                    // Create buttons based on the table status
-                    if ("Mon An".equals(status)) {
-                        actionButton.setText("Đặt Bàn");
-                        actionButton.addActionListener(e -> {
-                            // Display a confirmation dialog
-                            int result = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + foodName + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
+                        increaseButton.addActionListener(e -> {
+                            // Implement logic to increase the quantity of the product
+                            System.out.println("Increase quantity for " + foodName);
+                        });
 
-                            if (result == JOptionPane.YES_OPTION) {
-                                // Update the table status in the database (assuming you have a method to update the database)
-                                updateTableStatus(foodName, "Ban Da Dat");
+                        decreaseButton.addActionListener(e -> {
+                            // Implement logic to decrease the quantity of the product
+                            System.out.println("Decrease quantity for " + foodName);
+                        });
 
-                                // Change the button text to "Gọi Món"
-                                actionButton.setText("Gọi Món");
+                        // Add buttons to the button panel
+                        buttonPanel.setBackground(new Color(216, 250, 216));
+                        buttonPanel.add(increaseButton);
+                        buttonPanel.add(decreaseButton);
 
-                                // Add "Hủy Bàn" button
-                                JButton cancelButton = new JButton("Hủy Bàn");
-                                cancelButton.addActionListener(cancelEvent -> {
-                                     updateTableStatus(foodName, "");
-                                    actionButton.setText("Đặt Bàn");
-                                     // Remove "Gọi Món" and "Hủy Bàn" buttons
+                        // Create buttons based on the table status
+                        if ("Mon An".equals(status)) {
+                            actionButton.setText("Đặt Bàn");
+                            actionButton.addActionListener(e -> {
+                                // Display a confirmation dialog
+                                int result = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + foodName + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
+
+                                if (result == JOptionPane.YES_OPTION) {
+                                    // Update the table status in the database (assuming you have a method to update the database)
+                                    updateTableStatus(foodName, "Ban Da Dat");
+
+                                    // Change the button text to "Gọi Món"
+                                    actionButton.setText("Gọi Món");
+
+                                    // Add "Hủy Bàn" button
+                                    JButton cancelButton = new JButton("Hủy Bàn");
+                                    cancelButton.addActionListener(cancelEvent -> {
+                                        updateTableStatus(foodName, "");
+                                        actionButton.setText("Đặt Bàn");
+                                        // Remove "Gọi Món" and "Hủy Bàn" buttons
+                                        buttonPanel.removeAll();
+                                        buttonPanel.add(actionButton);
+                                        // Repaint the panel
+                                        tablePanelItem.revalidate();
+                                        tablePanelItem.repaint();
+                                    });
+
+                                    // Add "Gọi Món" button
+                                    JButton orderButton = new JButton("Gọi Món");
+                                    orderButton.addActionListener(orderEvent -> {
+                                        // Add code to handle the action when the "Gọi Món" button is clicked
+                                        System.out.println("Gọi Món clicked for table number: " + foodName);
+                                    });
+
+                                    // Add buttons to the buttonPanel   
                                     buttonPanel.removeAll();
-                                    buttonPanel.add(actionButton);
+                                    buttonPanel.add(orderButton);
+                                    buttonPanel.add(cancelButton);
+
                                     // Repaint the panel
                                     tablePanelItem.revalidate();
                                     tablePanelItem.repaint();
-                                });
+                                }
+                            });
+                        } else if ("Ban Da Dat".equals(status)) {
+                            actionButton.setText("Gọi Món");
+                            actionButton.addActionListener(orderEvent -> {
+                                // Add code to handle the action when the "Gọi Món" button is clicked
+                                System.out.println("Gọi Món clicked for table number: " + foodName);
+                            });
 
-                                // Add "Gọi Món" button
-                                JButton orderButton = new JButton("Gọi Món");
-                                orderButton.addActionListener(orderEvent -> {
-                                    // Add code to handle the action when the "Gọi Món" button is clicked
-                                    System.out.println("Gọi Món clicked for table number: " + foodName);
-                                });
+                            // Add "Hủy Bàn" button
+                            JButton cancelButton = new JButton("Hủy Bàn");
+                            cancelButton.addActionListener(cancelEvent -> {
+                                // Add code to handle the action when the "Hủy Bàn" button is clicked
+                                updateTableStatus(foodName, "Ban Trong");
+                                actionButton.setText("Đặt Bàn");
 
-                                // Add buttons to the buttonPanel   
+                                // Remove "Gọi Món" and "Hủy Bàn" buttons
                                 buttonPanel.removeAll();
-                                buttonPanel.add(orderButton);
-                                buttonPanel.add(cancelButton);
 
-                                // Repaint the panel
+                                // Add "Đặt Bàn" button
+                                actionButton.addActionListener(e -> {
+                                    // Display a confirmation dialog
+                                    int result = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + foodName + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
+
+                                    if (result == JOptionPane.YES_OPTION) {
+                                        // Update the table status in the database (assuming you have a method to update the database)
+                                        updateTableStatus(foodName, "Ban Da Dat");
+
+                                        // Change the button text to "Gọi Món"
+                                        actionButton.setText("Gọi Món");
+
+                                        // Add "Hủy Bàn" button
+                                        JButton newCancelButton = new JButton("Hủy Bàn");
+                                        newCancelButton.addActionListener(newCancelEvent -> {
+                                            updateTableStatus(foodName, "Ban Trong");
+                                            actionButton.setText("Đặt Bàn");
+                                            // Remove "Gọi Món" and "Hủy Bàn" buttons
+                                            buttonPanel.removeAll();
+                                            // Add "Đặt Bàn" button
+                                            buttonPanel.add(actionButton);
+                                            // Repaint the panel
+                                            tablePanelItem.revalidate();
+                                            tablePanelItem.repaint();
+                                        });
+
+                                        // Add "Gọi Món" button
+                                        JButton newOrderButton = new JButton("Gọi Món");
+                                        newOrderButton.addActionListener(newOrderEvent -> {
+                                            // Add code to handle the action when the "Gọi Món" button is clicked
+                                            System.out.println("Gọi Món clicked for table number: " + foodName);
+                                        });
+
+                                        // Add buttons to the buttonPanel   
+                                        buttonPanel.removeAll();
+                                        buttonPanel.setBackground(new Color(216, 250, 216));
+                                        buttonPanel.add(newOrderButton);
+                                        buttonPanel.add(newCancelButton);
+
+                                        // Repaint the panel
+                                        tablePanelItem.revalidate();
+                                        tablePanelItem.repaint();
+                                    }
+                                });
+
+                                // Add the actionButton to the buttonPanel
+                                buttonPanel.add(actionButton);
+
+                                // Repaint the panel    
+                                tablePanelItem.setBackground(new Color(216, 250, 216));
                                 tablePanelItem.revalidate();
                                 tablePanelItem.repaint();
-                            }
-                        });
-                    } else if ("Ban Da Dat".equals(status)) {
-    actionButton.setText("Gọi Món");
-    actionButton.addActionListener(orderEvent -> {
-        // Add code to handle the action when the "Gọi Món" button is clicked
-        System.out.println("Gọi Món clicked for table number: " + foodName);
-    });
+                            });
 
-    // Add "Hủy Bàn" button
-    JButton cancelButton = new JButton("Hủy Bàn");
-    cancelButton.addActionListener(cancelEvent -> {
-        // Add code to handle the action when the "Hủy Bàn" button is clicked
-        updateTableStatus(foodName, "Ban Trong");
-        actionButton.setText("Đặt Bàn");
+                            // Add buttons to the buttonPanel
+                            buttonPanel.add(actionButton);
+                            buttonPanel.add(cancelButton);
 
-        // Remove "Gọi Món" and "Hủy Bàn" buttons
-        buttonPanel.removeAll();
-
-        // Add "Đặt Bàn" button
-        actionButton.addActionListener(e -> {
-            // Display a confirmation dialog
-            int result = JOptionPane.showConfirmDialog(null, "Xác nhận đặt bàn cho bàn số " + foodName + "?", "Xác Nhận", JOptionPane.YES_NO_OPTION);
-
-            if (result == JOptionPane.YES_OPTION) {
-                // Update the table status in the database (assuming you have a method to update the database)
-                updateTableStatus(foodName, "Ban Da Dat");
-
-                // Change the button text to "Gọi Món"
-                actionButton.setText("Gọi Món");
-
-                // Add "Hủy Bàn" button
-                JButton newCancelButton = new JButton("Hủy Bàn");
-                newCancelButton.addActionListener(newCancelEvent -> {
-                    updateTableStatus(foodName, "Ban Trong");
-                    actionButton.setText("Đặt Bàn");
-                    // Remove "Gọi Món" and "Hủy Bàn" buttons
-                    buttonPanel.removeAll();
-                    // Add "Đặt Bàn" button
-                    buttonPanel.add(actionButton);
-                    // Repaint the panel
-                    tablePanelItem.revalidate();
-                    tablePanelItem.repaint();
-                });
-
-                // Add "Gọi Món" button
-                JButton newOrderButton = new JButton("Gọi Món");
-                newOrderButton.addActionListener(newOrderEvent -> {
-                    // Add code to handle the action when the "Gọi Món" button is clicked
-                    System.out.println("Gọi Món clicked for table number: " + foodName);
-                });
-
-                // Add buttons to the buttonPanel   
-                buttonPanel.removeAll();
-                buttonPanel.setBackground(new Color(216,250,216));
-                buttonPanel.add(newOrderButton);
-                buttonPanel.add(newCancelButton);
-
-                // Repaint the panel
-                tablePanelItem.revalidate();
-                tablePanelItem.repaint();
-            }
-        });
-
-        // Add the actionButton to the buttonPanel
-        buttonPanel.add(actionButton);
-
-        // Repaint the panel    
-        tablePanelItem.setBackground(new Color(216,250,216));
-        tablePanelItem.revalidate();
-        tablePanelItem.repaint();
-    });
-
-    // Add buttons to the buttonPanel
-    buttonPanel.add(actionButton);
-    buttonPanel.add(cancelButton);
-
-    // Repaint the panel
-    tablePanelItem.revalidate();
-    tablePanelItem.repaint();
-}
+                            // Repaint the panel
+                            tablePanelItem.revalidate();
+                            tablePanelItem.repaint();
+                        }
 
 // Set the foreground color to make the text visible on the background
-status1.setForeground(Color.BLUE);
+                        status1.setForeground(Color.BLUE);
 
 // Set other properties, e.g., opaque to make the background color visible
-status1.setOpaque(true);
-tablePanel.add(tablePanelItem);
-JTextField quantityField = new JTextField(2); // 5 là chiều rộng của trường văn bản
-    quantityField.setText("0"); // Set initial quantity to 0
-    increaseButton.addActionListener(e -> {
-        // Increment the quantity when the + button is clicked
-        int currentQuantity = Integer.parseInt(quantityField.getText());
-        quantityField.setText(String.valueOf(currentQuantity + 1));
-    });
+                        status1.setOpaque(true);
+                        tablePanel.add(tablePanelItem);
+                        JTextField quantityField = new JTextField(2); // 5 là chiều rộng của trường văn bản
+                        quantityField.setText("0"); // Set initial quantity to 0
+                        increaseButton.addActionListener(e -> {
+                            // Increment the quantity when the + button is clicked
+                            int currentQuantity = Integer.parseInt(quantityField.getText());
+                            quantityField.setText(String.valueOf(currentQuantity + 1));
+                        });
 
-    decreaseButton.addActionListener(e -> {
-        // Decrement the quantity, but not below 0, when the - button is clicked
-        int currentQuantity = Integer.parseInt(quantityField.getText());
-        if (currentQuantity > 0) {
-            quantityField.setText(String.valueOf(currentQuantity - 1));
-        }
-    });
-    JButton addOrder = new JButton("Gọi Món");
-        addOrder.addActionListener(orderEvent -> {
-            try {
-                JOptionPane.showMessageDialog(null, "Đã thêm " + Integer.parseInt(quantityField.getText()) + " " + foodName + " vào hóa đơn.", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
-                // Get the quantity from the quantityField
-                int quantity = Integer.parseInt(quantityField.getText());
-                // Create a Document representing the order
-                Document orderDocument = new Document();
-                orderDocument.append("foodId", foodId)
-                              .append("quantity", quantity);
+                        decreaseButton.addActionListener(e -> {
+                            // Decrement the quantity, but not below 0, when the - button is clicked
+                            int currentQuantity = Integer.parseInt(quantityField.getText());
+                            if (currentQuantity > 0) {
+                                quantityField.setText(String.valueOf(currentQuantity - 1));
+                            }
+                        });
+                        JButton addOrder = new JButton("Gọi Món");
+                        addOrder.addActionListener(orderEvent -> {
+                            try {
+                                JOptionPane.showMessageDialog(null, "Đã thêm " + Integer.parseInt(quantityField.getText()) + " " + foodName + " vào hóa đơn.", "Thông Báo", JOptionPane.INFORMATION_MESSAGE);
+                                // Get the quantity from the quantityField
+                                int quantity = Integer.parseInt(quantityField.getText());
+                                // Create a Document representing the order
+                                Document orderDocument = new Document();
+                                orderDocument.append("foodId", foodId)
+                                        .append("quantity", quantity);
 
-                // Add the order to the current bill (assuming you have the bill ID)
-                System.out.println("okkkkkkkkkkkkkkkkkkkkkkkkkkkkk" + idBill);
-                updateOrderInBill(idBill, orderDocument);
+                                // Add the order to the current bill (assuming you have the bill ID)
+                                System.out.println("okkkkkkkkkkkkkkkkkkkkkkkkkkkkk" + idBill);
+                                updateOrderInBill(idBill, orderDocument);
 
-                // Print a message or perform other actions as needed
-                System.out.println("Added order to the current bill: " + foodName + " - Quantity: " + quantity);
+                                // Print a message or perform other actions as needed
+                                System.out.println("Added order to the current bill: " + foodName + " - Quantity: " + quantity);
 
-            } catch (NumberFormatException e) {
-                // Handle the case where the quantityField doesn't contain a valid number
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Invalid quantity. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
+                            } catch (NumberFormatException e) {
+                                // Handle the case where the quantityField doesn't contain a valid number
+                                e.printStackTrace();
+                                JOptionPane.showMessageDialog(null, "Invalid quantity. Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
 
-            } catch (Exception e) {
-                // Handle other exceptions
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Error updating order in bill. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                            } catch (Exception e) {
+                                // Handle other exceptions
+                                e.printStackTrace();
+                                JOptionPane.showMessageDialog(null, "Error updating order in bill. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        });
+                        // Create a panel for quantity-related buttons
+                        JPanel quantityPanel = new JPanel();
+                        quantityPanel.setLayout(new FlowLayout()); // Use FlowLayout to arrange components from left to right
+                        quantityPanel.add(decreaseButton);
+                        quantityPanel.add(quantityField); // Add quantity field
+                        quantityPanel.add(increaseButton);
+                        quantityPanel.setBackground(new Color(216, 250, 216));
+
+                        // Create a new panel for both "Gọi Món" and quantity-related buttons
+                        JPanel buttonPanel1 = new JPanel();
+                        buttonPanel1.setLayout(new BorderLayout());
+
+                        // Add "Gọi Món" button to the top of the new panel
+                        buttonPanel1.add(addOrder, BorderLayout.SOUTH);
+
+                        // Add the quantity-related buttons panel to the center of the new panel
+                        buttonPanel1.add(quantityPanel, BorderLayout.CENTER);
+
+                        // Add components to the tablePanelItem
+                        tablePanelItem.setLayout(new BorderLayout());
+                        tablePanelItem.add(status1, BorderLayout.NORTH); // Place status1 at the top
+                        tablePanelItem.add(imageLabel, BorderLayout.CENTER); // Center the image
+                        tablePanelItem.add(buttonPanel1, BorderLayout.SOUTH); // Add the panel with buttons at the bottom
+
+                    }
+
+                    jPanel1.add(tablePanel);
+                    jPanel1.revalidate();
+                    jPanel1.repaint();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            private void updateTableStatus(String foodName, String ban_Da_Dat) {
+                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
             }
         });
-        // Create a panel for quantity-related buttons
-        JPanel quantityPanel = new JPanel();
-        quantityPanel.setLayout(new FlowLayout()); // Use FlowLayout to arrange components from left to right
-        quantityPanel.add(decreaseButton);
-        quantityPanel.add(quantityField); // Add quantity field
-        quantityPanel.add(increaseButton);
-        quantityPanel.setBackground(new Color(216,250,216));
+    }
 
-        // Create a new panel for both "Gọi Món" and quantity-related buttons
-        JPanel buttonPanel1 = new JPanel();
-        buttonPanel1.setLayout(new BorderLayout());
-
-        // Add "Gọi Món" button to the top of the new panel
-        buttonPanel1.add(addOrder, BorderLayout.SOUTH);
-
-        // Add the quantity-related buttons panel to the center of the new panel
-        buttonPanel1.add(quantityPanel, BorderLayout.CENTER);
-
-        // Add components to the tablePanelItem
-        tablePanelItem.setLayout(new BorderLayout());
-        tablePanelItem.add(status1, BorderLayout.NORTH); // Place status1 at the top
-        tablePanelItem.add(imageLabel, BorderLayout.CENTER); // Center the image
-        tablePanelItem.add(buttonPanel1, BorderLayout.SOUTH); // Add the panel with buttons at the bottom
-                  
-                }
-
-                jPanel1.add(tablePanel);
-                jPanel1.revalidate();
-                jPanel1.repaint();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        private void updateTableStatus(String foodName, String ban_Da_Dat) {
-            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-        }
-    });
-}
-
-
-    
     private void updateTableStatus(int foodName, String newStatus) {
         try {
             // Connect to MongoDB
@@ -650,15 +653,15 @@ JTextField quantityField = new JTextField(2); // 5 là chiều rộng của trư
             JOptionPane.showMessageDialog(null, "Error updating table status. Please try again.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-     private void tableButtonActionPerformed(java.awt.event.ActionEvent evt) {
+
+    private void tableButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // Handle table button click event if needed
         // You can add specific actions when a table button is clicked
         // For now, I'll just print a message to the console
         JButton clickedButton = (JButton) evt.getSource();
         System.out.println("Table clicked: " + clickedButton.getText());
     }
-  
+
     /**
      * @param args the command line arguments
      */
@@ -691,12 +694,12 @@ JTextField quantityField = new JTextField(2); // 5 là chiều rộng của trư
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-              new GoiMon(1).setVisible(true); 
-                
+                new GoiMon(1).setVisible(true);
+
             }
         });
     }
-    
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private java.awt.Canvas canvas1;

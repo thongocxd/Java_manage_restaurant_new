@@ -1,8 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
+
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -33,24 +30,22 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+
 /**
  *
  * @author kevin
  */
 public class Adminqualyhoadon extends javax.swing.JFrame {
-    private Dieuchinhhoadon dieuchinhhoadon;
-     private String billID;
-     private boolean ascendingOrder = false;    
-    
 
-    /**
-     * Creates new form Adminqualynhanvien
-     */
+    private Dieuchinhhoadon dieuchinhhoadon;
+    private String billID;
+    private boolean ascendingOrder = false;
+
     public Adminqualyhoadon() {
         initComponents();
         populateTableWithBillData();
-         this.billID = billID;
-         // Add mouse listener for sorting by date when clicking on the "Ngày" column header
+        this.billID = billID;
+        // Add mouse listener for sorting by date when clicking on the "Ngày" column header
         jTable1.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -100,7 +95,8 @@ public class Adminqualyhoadon extends javax.swing.JFrame {
         ));
         jTable1.setToolTipText("");
         jTable1.setGridColor(new java.awt.Color(204, 255, 255));
-        jTable1.setSelectionBackground(new java.awt.Color(241, 241, 241));
+        jTable1.setSelectionBackground(new java.awt.Color(51, 51, 51));
+        jTable1.setSelectionForeground(new java.awt.Color(255, 255, 255));
         jScrollPane1.setViewportView(jTable1);
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 0, 860, 544));
@@ -225,16 +221,16 @@ public class Adminqualyhoadon extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-            // Mở cửa sổ quản lý món ăn khi nút "Quản Lý Món Ăn" được bấm
-    Adminqualymonan adminQuanLyMonAn = new Adminqualymonan();
-    adminQuanLyMonAn.setVisible(true);
-    this.dispose(); // Đóng cửa sổ hiện tại (Admin)        // TODO add your handling code here:
+        // Mở cửa sổ quản lý món ăn khi nút "Quản Lý Món Ăn" được bấm
+        Adminqualymonan adminQuanLyMonAn = new Adminqualymonan();
+        adminQuanLyMonAn.setVisible(true);
+        this.dispose(); // Đóng cửa sổ hiện tại (Admin)        // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-    Adminqualynhanvien adminqualynhanvien = new Adminqualynhanvien();
-    adminqualynhanvien.setVisible(true);
-    this.dispose();         // TODO add your handling code here:
+        Adminqualynhanvien adminqualynhanvien = new Adminqualynhanvien();
+        adminqualynhanvien.setVisible(true);
+        this.dispose();         // TODO add your handling code here:
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -247,81 +243,83 @@ public class Adminqualyhoadon extends javax.swing.JFrame {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
-         int selectedRow = jTable1.getSelectedRow();
+        int selectedRow = jTable1.getSelectedRow();
 
-    if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(this, "Please select a bill to adjust.", "Error", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-
-    // Get the bill ID from the selected row
-    String billID = jTable1.getValueAt(selectedRow, 0).toString();
-
-    // Open the Dieuchinhhoadon frame with the selected bill ID
-    Dieuchinhhoadon dieuchinhhoadon = new Dieuchinhhoadon(billID);
-    dieuchinhhoadon.setVisible(true);
-    // Note: Do not dispose the Adminqualihoadon frame here
-    }//GEN-LAST:event_jButton4ActionPerformed
-
-    
-private void populateTableWithBillData() {
-    MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
-    MongoDatabase database = mongoClient.getDatabase("restaurant");
-    MongoCollection<Document> collection = database.getCollection("bill");
-
-    Bson sort = Sorts.descending("bill.bill_date");
-    try (MongoCursor<Document> cursor = collection.find().sort(sort).iterator()) {
-        String[] columnNames = {"ID", "Số Bàn", "Ngày", "Tổng Tiền", "Tình Trạng"};
-
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return true;
-            }
-        };
-
-        while (cursor.hasNext()) {
-            Document document = cursor.next();
-            String id = document.getObjectId("_id").toString();
-            int tableNumber = document.getInteger("table_number", 0);
-            Document billInfo = document.get("bill", Document.class);
-            String billDate = billInfo.getString("bill_date");
-            Integer totalPrice = billInfo.getInteger("total_price");
-            String paymentStatus = document.getString("payment_status");
-
-            model.addRow(new Object[]{id, tableNumber, billDate, totalPrice, paymentStatus});
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a bill to adjust.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
-        // Set the default sorting order for the "Ngày" column
-        RowSorter<? extends TableModel> sorter = new TableRowSorter<>(model);
-        jTable1.setRowSorter(sorter);
-        sorter.setSortKeys(Collections.singletonList(new SortKey(2, SortOrder.DESCENDING)));
+        // Get the bill ID from the selected row
+        String billID = jTable1.getValueAt(selectedRow, 0).toString();
 
-        jTable1.setModel(model);
-    } finally {
-        mongoClient.close();
+        // Open the Dieuchinhhoadon frame with the selected bill ID
+        Dieuchinhhoadon dieuchinhhoadon = new Dieuchinhhoadon(billID);
+        dieuchinhhoadon.setVisible(true);
+        // Note: Do not dispose the Adminqualihoadon frame here
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void populateTableWithBillData() {
+        MongoClient mongoClient = MongoClients.create("mongodb+srv://phucpro2104:phuc123@cluster0.7834cva.mongodb.net/test");
+        MongoDatabase database = mongoClient.getDatabase("restaurant");
+        MongoCollection<Document> collection = database.getCollection("bill");
+
+        Bson sort = Sorts.descending("bill.bill_date");
+        try (MongoCursor<Document> cursor = collection.find().sort(sort).iterator()) {
+            String[] columnNames = {"ID", "Số Bàn", "Ngày", "Tổng Tiền", "Tình Trạng"};
+
+            DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return true;
+                }
+            };
+
+            while (cursor.hasNext()) {
+                Document document = cursor.next();
+                String id = document.getObjectId("_id").toString();
+                int tableNumber = document.getInteger("table_number", 0);
+                Document billInfo = document.get("bill", Document.class);
+                String billDate = billInfo.getString("bill_date");
+                Integer totalPrice = billInfo.getInteger("total_price");
+                String paymentStatus = document.getString("payment_status");
+
+                model.addRow(new Object[]{id, tableNumber, billDate, totalPrice, paymentStatus});
+            }
+
+            // Set the default sorting order for the "Ngày" column
+            RowSorter<? extends TableModel> sorter = new TableRowSorter<>(model);
+            jTable1.setRowSorter(sorter);
+            sorter.setSortKeys(Collections.singletonList(new SortKey(2, SortOrder.DESCENDING)));
+
+            jTable1.setModel(model);
+        } finally {
+            mongoClient.close();
+        }
     }
-}
-void refreshTableData() {
-    // Call the method to populate the table with updated data
-    populateTableWithBillData();
-}
+
+    void refreshTableData() {
+        // Call the method to populate the table with updated data
+        populateTableWithBillData();
+    }
+
     private void sortByDate() {
-    RowSorter<? extends TableModel> sorter = jTable1.getRowSorter();
+        RowSorter<? extends TableModel> sorter = jTable1.getRowSorter();
 
-    if (sorter != null) {
-        List<? extends SortKey> sortKeys = sorter.getSortKeys();
+        if (sorter != null) {
+            List<? extends SortKey> sortKeys = sorter.getSortKeys();
 
-        // Toggle the sorting order
-        ascendingOrder = !ascendingOrder;
+            // Toggle the sorting order
+            ascendingOrder = !ascendingOrder;
 
-        // Determine the sort order based on the boolean value
-        SortOrder sortOrder = ascendingOrder ? SortOrder.ASCENDING : SortOrder.DESCENDING;
+            // Determine the sort order based on the boolean value
+            SortOrder sortOrder = ascendingOrder ? SortOrder.ASCENDING : SortOrder.DESCENDING;
 
-        // Set the sort keys with the updated order for the "Ngày" column
-        sorter.setSortKeys(Collections.singletonList(new SortKey(2, sortOrder)));
+            // Set the sort keys with the updated order for the "Ngày" column
+            sorter.setSortKeys(Collections.singletonList(new SortKey(2, sortOrder)));
+        }
     }
-}
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
